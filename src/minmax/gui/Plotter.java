@@ -6,6 +6,7 @@ package minmax.gui;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import javax.media.opengl.GLJPanel;
 import javax.swing.JPanel;
 
@@ -131,23 +132,15 @@ public class Plotter extends GLJPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        
+
         final int w = getSize().width;
         final int h = getSize().height;
 
         GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().
-getDefaultConfiguration();
+                getDefaultConfiguration();
         BufferedImage buffer = gc.createCompatibleImage(w, h);
         Graphics2D g2 = (Graphics2D) buffer.getGraphics();
-
-        
         //Graphics2D g2 = (Graphics2D) g;
-
-        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-        g2.setStroke(new BasicStroke(1.0f,
-                BasicStroke.CAP_BUTT,
-               BasicStroke.JOIN_MITER,
-             10.0f, new float[]{2.0f}, 0.0f));
 
         final int kX = (currentDrag.x - startDrag.x) % cellSize;
         final int kY = (currentDrag.y - startDrag.y) % cellSize;
@@ -162,77 +155,127 @@ getDefaultConfiguration();
 
 
         //Layer1
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+        g2.setColor(Color.decode("#dddddd"));
+        g2.setStroke(new BasicStroke(1.0f,
+                BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER,
+                10.0f, new float[]{2.0f}, 0.0f));
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
+                RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_SPEED);
+
         int column = 0;
         for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 2; ++i) {
             if (i != gridCenter.x) {
-                g2.setColor(Color.decode("#dddddd"));
                 g2.drawLine(column * cellSize + kX, 0, column * cellSize + kX, h);
             }
 
-            int row = 0;
-            for (int j = viewboxCenter.y - viewboxH; j <= viewboxCenter.y + viewboxH + 2; ++j) {
-                if (j != gridCenter.y) {
-                    g2.setColor(Color.decode("#dddddd"));
-                    g2.drawLine(0, row * cellSize + kY, w, row * cellSize + kY);
-
-                }
-                ++row;
-            }
             ++column;
         }
 
-        //Layer 2
+        int row = 0;
+        for (int i = viewboxCenter.y - viewboxH; i <= viewboxCenter.y + viewboxH + 2; ++i) {
+            if (i != gridCenter.y) {
+                g2.drawLine(0, row * cellSize + kY, w, row * cellSize + kY);
+            }
+            
+            ++row;
+        }
+
+        //Layer2
+        g2.setColor(Color.black);
         g2.setStroke(new BasicStroke(1.0f));
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-        column = 0;
-        for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 1; ++i) {
-            if (i == gridCenter.x) {
-                g2.setColor(Color.black);
-                g2.drawLine(column * cellSize + kX, 0, column * cellSize + kX, h);
-            }
-            int row = 0;
-            for (int j = viewboxCenter.y - viewboxH; j <= viewboxCenter.y + viewboxH + 1; ++j) {
-                if (j == gridCenter.y) {
-                    g2.setColor(Color.black);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
+                RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_SPEED);
 
-                    g2.drawLine(0, row * cellSize + kY, w, row * cellSize + kY);
+        column = 0;
+        final boolean shifted_h = (viewboxCenter.y - viewboxH) >= gridCenter.y - 1;
+        for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 2; ++i) {
+            if (i == gridCenter.x) {
+                g2.drawLine(column * cellSize + kX, (shifted_h ? 0 : Math.max((int)(6*zoom), 4)), column * cellSize + kX, h);
+                
+                row = (shifted_h ? 0:2);
+                for (int j = viewboxCenter.y - viewboxH; j <= viewboxCenter.y + viewboxH + 2; ++j) {
+                    if (j + (shifted_h ? 0:2)  != gridCenter.y) {
+                        g2.drawLine(column * cellSize + kX - 2, row * cellSize + kY, column * cellSize + kX + 2, row * cellSize + kY);
+                    }
+                    ++row;
                 }
-                ++row;
+                
+                if(!shifted_h){
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.fillPolygon(new int[]{column * cellSize + kX - Math.max((int)(2*zoom), 2), column * cellSize + kX, column * cellSize + kX + Math.max((int)(2*zoom), 2)},
+                            new int[]{Math.max((int)(6*zoom), 4), 0, Math.max((int)(6*zoom), 4)}, 3);
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_OFF);
+                }
             }
+
             ++column;
         }
+
+        row = 0;
+        final boolean shifted_w = (viewboxCenter.x + viewboxW) <= gridCenter.x;
+        for (int i = viewboxCenter.y - viewboxH; i <= viewboxCenter.y + viewboxH + 2; ++i) {
+            if (i == gridCenter.y) {
+                g2.drawLine(0, row * cellSize + kY, w - (shifted_w ? 0 : Math.max((int)(6*zoom), 4)), row * cellSize + kY);
+
+                column = 0;
+                for (int j = viewboxCenter.x - viewboxW; j < viewboxCenter.x + viewboxW + (shifted_w ? 2:0); ++j) {
+                    if (j != gridCenter.x) {
+                            g2.drawLine(column * cellSize + kX, row * cellSize + kY - 2, column * cellSize + kX, row * cellSize + kY + 2);
+                    }
+                    ++column;
+                }
+                if(!shifted_w){
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.fillPolygon(new int[]{w - Math.max((int)(6*zoom), 4), w, w - Math.max((int)(6*zoom), 4)}, new int[]{row * cellSize + kY - Math.max((int)(2*zoom), 2), row * cellSize + kY, row * cellSize + kY + Math.max((int)(2*zoom), 2)}, 3);
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_OFF);
+                }
+            }
+            ++row;
+        }
+
 
         //Layer 3
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        //g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-        //g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
+                RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_QUALITY);
         column = 0;
         for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 1; ++i) {
-            int row = 0;
-            for (int j = viewboxCenter.y - viewboxH; j <= viewboxCenter.y + viewboxH + 1; ++j) {
+            row = 0;
+            for (int j = viewboxCenter.y - viewboxH; j
+                    <= viewboxCenter.y + viewboxH + 1; ++j) {
 
                 if (i == gridCenter.x + 5 && j == gridCenter.y + 5) {
                     g2.setColor(Color.red);
-                    g2.fillOval(column * cellSize + kX - testR, row * cellSize + kY - testR, testR * 2 + 1, testR * 2 + 1);
+                    g2.fillOval(column * cellSize + kX - testR,
+                            row * cellSize + kY - testR, testR * 2 + 1, testR * 2 + 1);
                 }
 
                 if (i == gridCenter.x + 6 && j == gridCenter.x + 5) {
                     g2.setColor(Color.blue);
-                    g2.fillOval(column * cellSize + kX - testR, row * cellSize + kY - testR, testR * 2 + 1, testR * 2 + 1);
+                    g2.fillOval(column * cellSize + kX - testR,
+                            row * cellSize + kY - testR, testR * 2 + 1, testR * 2 + 1);
                 }
                 ++row;
             }
             ++column;
         }
-        
+
         g.drawImage(buffer, 0, 0, this);
         g2.dispose();
     }

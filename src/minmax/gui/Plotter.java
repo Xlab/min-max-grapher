@@ -145,14 +145,14 @@ public class Plotter extends GLJPanel {
 
 
         int column = 0;
-        for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 1; ++i) {
+        for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 2; ++i) {
             if (i != gridCenter.x) {
                 g.setColor(Color.decode("#dddddd"));
                 g.drawLine(column * cellSize + (currentDrag.x - startDrag.x) % cellSize, 0, column * cellSize + (currentDrag.x - startDrag.x) % cellSize, h);
             }
 
             int row = 0;
-            for (int j = viewboxCenter.y - viewboxH; j <= viewboxCenter.y + viewboxH + 1; ++j) {
+            for (int j = viewboxCenter.y - viewboxH; j <= viewboxCenter.y + viewboxH +2; ++j) {
                 if (j != gridCenter.y) {
                     g.setColor(Color.decode("#dddddd"));
                     g.drawLine(0, row * cellSize + (currentDrag.y - startDrag.y) % cellSize, w, row * cellSize + (currentDrag.y - startDrag.y) % cellSize);

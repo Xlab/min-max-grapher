@@ -22,7 +22,7 @@ public class Plotter extends GLJPanel {
     private Point startDrag = new Point(0, 0);
     private Point currentDrag = new Point(0, 0);
     private int cellSize;
-
+    
     public Plotter() {
         initComponents();
         gridCenter = new Point(gridBounds / 2, gridBounds / 2);
@@ -109,7 +109,7 @@ public class Plotter extends GLJPanel {
 
     private void iZoom(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_iZoom
         setZoom(getZoom() + evt.getWheelRotation() * 0.1);
-        repaint();
+        //repaint();
     }//GEN-LAST:event_iZoom
 
     private void mousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mousePressed
@@ -121,7 +121,7 @@ public class Plotter extends GLJPanel {
         currentDrag = evt.getPoint();
         viewboxCorner = currentDrag.getLocation();
         viewboxCenter = new Point(tmpViewboxCenter.x - (currentDrag.x - startDrag.x) / cellSize, tmpViewboxCenter.y - (currentDrag.y - startDrag.y) / cellSize);
-        repaint();
+        //repaint();
     }//GEN-LAST:event_mouseDragged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -131,61 +131,93 @@ public class Plotter extends GLJPanel {
         super.paint(g);
         
         Graphics2D g2 = (Graphics2D)g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON);
 
+                g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+        g2.setStroke(new BasicStroke(1.0f,
+                        BasicStroke.CAP_BUTT,
+                        BasicStroke.JOIN_MITER,
+                        10.0f, new float[]{2.0f}, 0.0f));
+        
         final int w = getSize().width;
         final int h = getSize().height;
+        final int kX = (currentDrag.x - startDrag.x) % cellSize;
+        final int kY = (currentDrag.y - startDrag.y) % cellSize;
+        
         viewboxW = w / (2 * cellSize);
         viewboxH = h / (2 * cellSize);
+        
+        final int testR = 2;
 
         g.setColor(Color.decode("#f4f4f4"));
         g.fillRect(0, 0, w, h);
 
 
-
+        //Layer1
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
         int column = 0;
         for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 2; ++i) {
             if (i != gridCenter.x) {
                 g.setColor(Color.decode("#dddddd"));
-                g.drawLine(column * cellSize + (currentDrag.x - startDrag.x) % cellSize, 0, column * cellSize + (currentDrag.x - startDrag.x) % cellSize, h);
+                g.drawLine(column * cellSize + kX, 0, column * cellSize + kX, h);
             }
 
             int row = 0;
             for (int j = viewboxCenter.y - viewboxH; j <= viewboxCenter.y + viewboxH +2; ++j) {
                 if (j != gridCenter.y) {
                     g.setColor(Color.decode("#dddddd"));
-                    g.drawLine(0, row * cellSize + (currentDrag.y - startDrag.y) % cellSize, w, row * cellSize + (currentDrag.y - startDrag.y) % cellSize);
+                    g.drawLine(0, row * cellSize + kY, w, row * cellSize + kY);
 
                 }
                 ++row;
             }
             ++column;
         }
-
+        
+        //Layer 2
+        g2.setStroke(new BasicStroke(1.0f));
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
         column = 0;
         for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 1; ++i) {
             if (i == gridCenter.x) {
                 g.setColor(Color.black);
-                g.drawLine(column * cellSize + (currentDrag.x - startDrag.x) % cellSize, 0, column * cellSize + (currentDrag.x - startDrag.x) % cellSize, h);
+                g.drawLine(column * cellSize + kX, 0, column * cellSize + kX, h);
             }
             int row = 0;
             for (int j = viewboxCenter.y - viewboxH; j <= viewboxCenter.y + viewboxH + 1; ++j) {
-
-                if (i == 55 && j == 55) {
-                    g.setColor(Color.red);
-                    g.fillOval(column * cellSize + (currentDrag.x - startDrag.x) % cellSize, row * cellSize + (currentDrag.y - startDrag.y) % cellSize, 35, 35);
-                }
-
-                if (i == 56 && j == 55) {
-                    g.setColor(Color.blue);
-                    g.fillOval(column * cellSize + (currentDrag.x - startDrag.x) % cellSize, row * cellSize + (currentDrag.y - startDrag.y) % cellSize, 35, 35);
-                }
-
                 if (j == gridCenter.y) {
                     g.setColor(Color.black);
                     
-                    g.drawLine(0, row * cellSize + (currentDrag.y - startDrag.y) % cellSize, w, row * cellSize + (currentDrag.y - startDrag.y) % cellSize);
+                    g.drawLine(0, row * cellSize + kY, w, row * cellSize + kY);
+                }
+                ++row;
+            }
+            ++column;
+        }
+        
+        //Layer 3
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        //g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        //g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        //g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+        g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+        column = 0;
+        for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 1; ++i) {
+            int row = 0;
+            for (int j = viewboxCenter.y - viewboxH; j <= viewboxCenter.y + viewboxH + 1; ++j) {
+
+                if (i == gridCenter.x + 5 && j == gridCenter.y + 5) {
+                    g.setColor(Color.red);
+                    g.fillOval(column * cellSize + kX - testR, row * cellSize + kY - testR, testR*2 +1, testR*2+1);
+                }
+
+                if (i == gridCenter.x + 6 && j == gridCenter.x + 5) {
+                    g.setColor(Color.blue);
+                    g.fillOval(column * cellSize + kX - testR, row * cellSize + kY -testR, testR*2 +1, testR*2+1);
                 }
                 ++row;
             }

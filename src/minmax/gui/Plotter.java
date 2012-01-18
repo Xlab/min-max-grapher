@@ -121,14 +121,14 @@ public class Plotter extends GLJPanel {
         currentDrag = evt.getPoint();
         viewboxCorner = currentDrag.getLocation();
         viewboxCenter = new Point(tmpViewboxCenter.x - (currentDrag.x - startDrag.x) / cellSize, tmpViewboxCenter.y - (currentDrag.y - startDrag.y) / cellSize);
-        //repaint();
+        repaint();
     }//GEN-LAST:event_mouseDragged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         
         Graphics2D g2 = (Graphics2D)g;
 

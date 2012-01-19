@@ -204,7 +204,17 @@ public class Plotter extends GLJPanel {
                 row = (shifted_h ? 0:2);
                 for (int j = viewboxCenter.y - viewboxH; j <= viewboxCenter.y + viewboxH + 2; ++j) {
                     if (j + (shifted_h ? 0:2)  != gridCenter.y) {
+                        //засечки
                         g2.drawLine(column * cellSize + kX - 2, row * cellSize + kY, column * cellSize + kX + 2, row * cellSize + kY);
+                        //цифры
+                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+                        g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int)(8*zoom),8)));
+                        
+                        final int val = -(j - gridCenter.y + (shifted_h ? 0:2));
+                        g2.drawString("" + val, column * cellSize + kX - (Math.min((int)(8*zoom),8) / 2) - (("" + val).length()*(Math.min((int)(8*zoom),8))/2), row * cellSize + kY + (Math.min((int)(8*zoom),8))/2);
+                                                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_OFF);
                     }
                     ++row;
                 }
@@ -226,15 +236,28 @@ public class Plotter extends GLJPanel {
         final boolean shifted_w = (viewboxCenter.x + viewboxW) <= gridCenter.x;
         for (int i = viewboxCenter.y - viewboxH; i <= viewboxCenter.y + viewboxH + 2; ++i) {
             if (i == gridCenter.y) {
+                //ось
                 g2.drawLine(0, row * cellSize + kY, w - (shifted_w ? 0 : Math.max((int)(6*zoom), 4)), row * cellSize + kY);
 
+                //засечки & цифры
                 column = 0;
                 for (int j = viewboxCenter.x - viewboxW; j < viewboxCenter.x + viewboxW + (shifted_w ? 2:0); ++j) {
                     if (j != gridCenter.x) {
+                            //засечки
                             g2.drawLine(column * cellSize + kX, row * cellSize + kY - 2, column * cellSize + kX, row * cellSize + kY + 2);
+                            
+                            //цифры
+                            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+                            g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int)(8*zoom),8)));
+                            g2.drawString("" + (j - gridCenter.x), column * cellSize + kX - (Math.min((int)(8*zoom),8) / 2), row * cellSize + kY + Math.min((int)(8*zoom),8) + 3);
+                                                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_OFF);
                     }
                     ++column;
                 }
+                
+                //стрелочка & переменная
                 if(!shifted_w){
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);

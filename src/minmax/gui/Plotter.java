@@ -6,9 +6,9 @@ package minmax.gui;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import javax.media.opengl.GLJPanel;
-import javax.swing.JPanel;
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXFormula;
 
 /**
  *
@@ -133,6 +133,7 @@ public class Plotter extends GLJPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        final Point p = new Point(0, 0);
         final int w = getSize().width;
         final int h = getSize().height;
 
@@ -147,6 +148,9 @@ public class Plotter extends GLJPanel {
 
         viewboxW = w / (2 * cellSize);
         viewboxH = h / (2 * cellSize);
+
+        final boolean shifted_h = (viewboxCenter.y - viewboxH) > gridCenter.y - 3;
+        final boolean shifted_w = (viewboxCenter.x + viewboxW) <= gridCenter.x + 1;
 
         final int testR = 2;
 
@@ -181,7 +185,7 @@ public class Plotter extends GLJPanel {
             if (i != gridCenter.y) {
                 g2.drawLine(0, row * cellSize + kY, w, row * cellSize + kY);
             }
-            
+
             ++row;
         }
 
@@ -196,36 +200,45 @@ public class Plotter extends GLJPanel {
                 RenderingHints.VALUE_RENDER_SPEED);
 
         column = 0;
-        final boolean shifted_h = (viewboxCenter.y - viewboxH) >= gridCenter.y - 1;
         for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 2; ++i) {
             if (i == gridCenter.x) {
-                g2.drawLine(column * cellSize + kX, (shifted_h ? 0 : Math.max((int)(6*zoom), 4)), column * cellSize + kX, h);
-                
-                row = (shifted_h ? 0:2);
+                if (!shifted_h) {
+                    p.move(column * cellSize + kX - (Math.max((int) (15 * zoom), 15)), (Math.max((int) (5 * zoom), 5)));
+                    g2.drawImage(new TeXFormula("\\delta").createBufferedImage(TeXConstants.STYLE_DISPLAY, (Math.max((int) (15 * zoom), 15)), Color.black, Color.decode("#f4f4f4")), p.x, p.y, this);
+                }
+
+                g2.drawLine(column * cellSize + kX, (shifted_h ? 0 : Math.max((int) (6 * zoom), 4)), column * cellSize + kX, h);
+
+                row = (shifted_h ? 0 : 2);
                 for (int j = viewboxCenter.y - viewboxH; j <= viewboxCenter.y + viewboxH + 2; ++j) {
-                    if (j + (shifted_h ? 0:2)  != gridCenter.y) {
+                    if (j + (shifted_h ? 0 : 2) != gridCenter.y) {
                         //засечки
                         g2.drawLine(column * cellSize + kX - 2, row * cellSize + kY, column * cellSize + kX + 2, row * cellSize + kY);
+
                         //цифры
                         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-                        g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int)(8*zoom),8)));
-                        
-                        final int val = -(j - gridCenter.y + (shifted_h ? 0:2));
-                        g2.drawString("" + val, column * cellSize + kX - (Math.min((int)(8*zoom),8) / 2) - (("" + val).length()*(Math.min((int)(8*zoom),8))/2), row * cellSize + kY + (Math.min((int)(8*zoom),8))/2);
-                                                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_OFF);
+                                RenderingHints.VALUE_ANTIALIAS_ON);
+                        g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int) (8 * zoom), 8)));
+
+                        final int val = -(j - gridCenter.y + (shifted_h ? 0 : 2));
+                        g2.drawString("" + val,
+                                column * cellSize + kX - (Math.min((int) (8 * zoom), 8) / 2)
+                                - (("" + val).length() * (Math.min((int) (8 * zoom), 8)) / 2),
+                                row * cellSize + kY + (Math.min((int) (8 * zoom), 8)) / 2);
+                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_OFF);
                     }
                     ++row;
                 }
-                
-                if(!shifted_h){
+
+                if (!shifted_h) {
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-                    g2.fillPolygon(new int[]{column * cellSize + kX - Math.max((int)(2*zoom), 2), column * cellSize + kX, column * cellSize + kX + Math.max((int)(2*zoom), 2)},
-                            new int[]{Math.max((int)(6*zoom), 4), 0, Math.max((int)(6*zoom), 4)}, 3);
+                            RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.fillPolygon(new int[]{column * cellSize + kX - Math.max((int) (2 * zoom), 2), column * cellSize + kX,
+                                column * cellSize + kX + Math.max((int) (2 * zoom), 2)},
+                            new int[]{Math.max((int) (6 * zoom), 4), 0, Math.max((int) (6 * zoom), 4)}, 3);
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_OFF);
+                            RenderingHints.VALUE_ANTIALIAS_OFF);
                 }
             }
 
@@ -233,37 +246,42 @@ public class Plotter extends GLJPanel {
         }
 
         row = 0;
-        final boolean shifted_w = (viewboxCenter.x + viewboxW) <= gridCenter.x;
         for (int i = viewboxCenter.y - viewboxH; i <= viewboxCenter.y + viewboxH + 2; ++i) {
             if (i == gridCenter.y) {
+                if (!shifted_w) {
+                    p.move(w - (Math.max((int) (15 * zoom), 15)), row * cellSize + kY + 5);
+                    g2.drawImage(new TeXFormula("\\gamma").createBufferedImage(TeXConstants.STYLE_DISPLAY, (Math.max((int) (15 * zoom), 15)), Color.black, Color.decode("#f4f4f4")), p.x, p.y, this);
+                }
+
+
                 //ось
-                g2.drawLine(0, row * cellSize + kY, w - (shifted_w ? 0 : Math.max((int)(6*zoom), 4)), row * cellSize + kY);
+                g2.drawLine(0, row * cellSize + kY, w - (shifted_w ? 0 : Math.max((int) (6 * zoom), 4)), row * cellSize + kY);
 
                 //засечки & цифры
                 column = 0;
-                for (int j = viewboxCenter.x - viewboxW; j < viewboxCenter.x + viewboxW + (shifted_w ? 2:0); ++j) {
+                for (int j = viewboxCenter.x - viewboxW; j < viewboxCenter.x + viewboxW + (shifted_w ? 2 : 0); ++j) {
                     if (j != gridCenter.x) {
-                            //засечки
-                            g2.drawLine(column * cellSize + kX, row * cellSize + kY - 2, column * cellSize + kX, row * cellSize + kY + 2);
-                            
-                            //цифры
-                            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-                            g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int)(8*zoom),8)));
-                            g2.drawString("" + (j - gridCenter.x), column * cellSize + kX - (Math.min((int)(8*zoom),8) / 2), row * cellSize + kY + Math.min((int)(8*zoom),8) + 3);
-                                                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_OFF);
+                        //засечки
+                        g2.drawLine(column * cellSize + kX, row * cellSize + kY - 2, column * cellSize + kX, row * cellSize + kY + 2);
+
+                        //цифры
+                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_ON);
+                        g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int) (8 * zoom), 8)));
+                        g2.drawString("" + (j - gridCenter.x), column * cellSize + kX - (Math.min((int) (8 * zoom), 8) / 2), row * cellSize + kY + Math.min((int) (8 * zoom), 8) + 3);
+                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                RenderingHints.VALUE_ANTIALIAS_OFF);
                     }
                     ++column;
                 }
-                
+
                 //стрелочка & переменная
-                if(!shifted_w){
+                if (!shifted_w) {
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-                    g2.fillPolygon(new int[]{w - Math.max((int)(6*zoom), 4), w, w - Math.max((int)(6*zoom), 4)}, new int[]{row * cellSize + kY - Math.max((int)(2*zoom), 2), row * cellSize + kY, row * cellSize + kY + Math.max((int)(2*zoom), 2)}, 3);
+                            RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2.fillPolygon(new int[]{w - Math.max((int) (6 * zoom), 4), w, w - Math.max((int) (6 * zoom), 4)}, new int[]{row * cellSize + kY - Math.max((int) (2 * zoom), 2), row * cellSize + kY, row * cellSize + kY + Math.max((int) (2 * zoom), 2)}, 3);
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_OFF);
+                            RenderingHints.VALUE_ANTIALIAS_OFF);
                 }
             }
             ++row;

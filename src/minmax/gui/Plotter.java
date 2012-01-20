@@ -25,6 +25,9 @@ public class Plotter extends GLJPanel {
     private Point startDrag = new Point(0, 0);
     private Point currentDrag = new Point(0, 0);
     private int cellSize;
+    boolean dragStarted;
+    int kX;
+    int kY;
 
     public Plotter() {
         initComponents();
@@ -32,10 +35,9 @@ public class Plotter extends GLJPanel {
         viewboxCenter = gridCenter.getLocation();
         cellSize = 20;
         viewboxCorner = new Point(0, 0);
+        grid = new Grid(gridBounds);
     }
-
     private Grid grid = new Grid();
-
 
     public Grid getGrid() {
         return grid;
@@ -44,8 +46,7 @@ public class Plotter extends GLJPanel {
     public void setGrid(Grid grid) {
         this.grid = grid;
     }
-    
-    private int gridBounds = 100;
+    private int gridBounds = 1000;
 
     public int getGridBounds() {
         return gridBounds;
@@ -103,6 +104,12 @@ public class Plotter extends GLJPanel {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 Plotter.this.mousePressed(evt);
             }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                Plotter.this.mouseReleased(evt);
+            }
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Plotter.this.mouseClicked(evt);
+            }
         });
         addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
@@ -128,6 +135,7 @@ public class Plotter extends GLJPanel {
     }//GEN-LAST:event_iZoom
 
     private void mousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mousePressed
+        dragStarted = true;
         startDrag = evt.getPoint();
         tmpViewboxCenter = viewboxCenter.getLocation();
     }//GEN-LAST:event_mousePressed
@@ -138,6 +146,27 @@ public class Plotter extends GLJPanel {
         viewboxCenter = new Point(tmpViewboxCenter.x - (currentDrag.x - startDrag.x) / cellSize, tmpViewboxCenter.y - (currentDrag.y - startDrag.y) / cellSize);
         repaint();
     }//GEN-LAST:event_mouseDragged
+
+    private void mouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mouseClicked
+        int x = 0, y = 0;
+        for (int i = 0; i < viewboxW * 2; ++i) {
+            if (Math.abs(i * cellSize + kX - evt.getX()) <= cellSize / 2) {
+                x = (viewboxCenter.x - viewboxW) + i - gridCenter.x;
+            }
+        }
+
+        for (int i = 0; i < viewboxH * 2; ++i) {
+            if (Math.abs(i * cellSize + kY - evt.getY()) <= cellSize / 2) {
+                y = (viewboxCenter.y - viewboxH) + i - gridCenter.y;
+            }
+        }
+
+        placeDot(x, y, Color.red);
+    }//GEN-LAST:event_mouseClicked
+
+    private void mouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mouseReleased
+        dragStarted = false;
+    }//GEN-LAST:event_mouseReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
@@ -155,8 +184,10 @@ public class Plotter extends GLJPanel {
         Graphics2D g2 = (Graphics2D) buffer.getGraphics();
         //Graphics2D g2 = (Graphics2D) g;
 
-        final int kX = (currentDrag.x - startDrag.x) % cellSize;
-        final int kY = (currentDrag.y - startDrag.y) % cellSize;
+        if (dragStarted) {
+            kX = (currentDrag.x - startDrag.x) % cellSize;
+            kY = (currentDrag.y - startDrag.y) % cellSize;
+        }
 
         viewboxW = w / (2 * cellSize);
         viewboxH = h / (2 * cellSize);
@@ -312,15 +343,11 @@ public class Plotter extends GLJPanel {
             row = 0;
             for (int j = viewboxCenter.y - viewboxH; j
                     <= viewboxCenter.y + viewboxH + 1; ++j) {
-
-                if (i == gridCenter.x + 5 && j == gridCenter.y + 5) {
-                    g2.setColor(Color.red);
-                    g2.fillOval(column * cellSize + kX - testR,
-                            row * cellSize + kY - testR, testR * 2 + 1, testR * 2 + 1);
-                }
-
-                if (i == gridCenter.x + 6 && j == gridCenter.x + 5) {
-                    g2.setColor(Color.blue);
+                final int x, y;
+                x = i - gridCenter.x;
+                y = j - gridCenter.y;
+                if (grid.exist(x, y)) {
+                    g2.setColor(grid.getPoint(x, y));
                     g2.fillOval(column * cellSize + kX - testR,
                             row * cellSize + kY - testR, testR * 2 + 1, testR * 2 + 1);
                 }
@@ -331,5 +358,10 @@ public class Plotter extends GLJPanel {
 
         g.drawImage(buffer, 0, 0, this);
         g2.dispose();
+    }
+
+    private void placeDot(int x, int y, Color c) {
+        grid.setPoint(x, y, c);
+        repaint();
     }
 }

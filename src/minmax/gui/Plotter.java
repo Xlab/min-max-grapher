@@ -33,6 +33,18 @@ public class Plotter extends GLJPanel {
         cellSize = 20;
         viewboxCorner = new Point(0, 0);
     }
+
+    private Grid grid = new Grid();
+
+
+    public Grid getGrid() {
+        return grid;
+    }
+
+    public void setGrid(Grid grid) {
+        this.grid = grid;
+    }
+    
     private int gridBounds = 100;
 
     public int getGridBounds() {

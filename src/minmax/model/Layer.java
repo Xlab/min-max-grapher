@@ -1,5 +1,6 @@
 package minmax.model;
 
+import minmax.slope.Piece;
 import minmax.Settings;
 
 /**
@@ -35,7 +36,7 @@ public class Layer {
         }
     }
 
-    public void placeEvent(int x, int y, Piece e)
+    public void placePiece(int x, int y, Piece e)
             throws IllegalArgumentException {
         if (y < grid.length && x < grid.length && e != null) {
             grid[y][x] = e;

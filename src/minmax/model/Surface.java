@@ -1,5 +1,6 @@
 package minmax.model;
 
+import minmax.slope.Piece;
 import java.util.ArrayList;
 
 /**
@@ -17,9 +18,9 @@ public class Surface {
         currentLayer = 0;
     }
 
-    void placeEvent(Piece e)
+    void placePiece(Piece e)
     {
-        tempLayer.placeEvent(e.getLocation().x, e.getLocation().y, e);
+        tempLayer.placePiece(e.getLocation().x, e.getLocation().y, e);
     }
     
     void sealLayer()

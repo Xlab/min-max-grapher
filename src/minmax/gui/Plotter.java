@@ -5,6 +5,7 @@
 package minmax.gui;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import javax.media.opengl.GLJPanel;
 import org.scilab.forge.jlatexmath.TeXConstants;
@@ -72,6 +73,27 @@ public class Plotter extends GLJPanel {
     public double getZoom() {
         return zoom;
     }
+    
+    private String xLabel = "X";
+
+    public String getXLabel() {
+        return xLabel;
+    }
+
+    public void setXLabel(String xLabel) {
+        this.xLabel = xLabel;
+    }
+
+    private String yLabel = "Y";
+
+    public String getYLabel() {
+        return yLabel;
+    }
+
+    public void setYLabel(String yLabel) {
+        this.yLabel = yLabel;
+    }
+
 
     public void setZoom(double zoom) {
         if (zoom >= 0.4 && zoom <= 2) {
@@ -247,7 +269,7 @@ public class Plotter extends GLJPanel {
             if (i == gridCenter.x) {
                 if (!shifted_h) {
                     p.move(column * cellSize + kX - (Math.max((int) (15 * zoom), 15)), (Math.max((int) (5 * zoom), 5)));
-                    g2.drawImage(new TeXFormula("\\delta").createBufferedImage(TeXConstants.STYLE_DISPLAY, (Math.max((int) (15 * zoom), 15)), Color.black, Color.decode("#f4f4f4")), p.x, p.y, this);
+                    g2.drawImage(drawFormula(getYLabel(), true), p.x, p.y, this);
                 }
 
                 g2.drawLine(column * cellSize + kX, (shifted_h ? 0 : Math.max((int) (6 * zoom), 4)), column * cellSize + kX, h);
@@ -292,8 +314,8 @@ public class Plotter extends GLJPanel {
         for (int i = viewboxCenter.y - viewboxH; i <= viewboxCenter.y + viewboxH + 2; ++i) {
             if (i == gridCenter.y) {
                 if (!shifted_w) {
-                    p.move(w - (Math.max((int) (15 * zoom), 15)), row * cellSize + kY + 5);
-                    g2.drawImage(new TeXFormula("\\gamma").createBufferedImage(TeXConstants.STYLE_DISPLAY, (Math.max((int) (15 * zoom), 15)), Color.black, Color.decode("#f4f4f4")), p.x, p.y, this);
+                    p.move(w - (Math.max((int) (15 * zoom), 15)), row * cellSize + kY + 10);
+                    g2.drawImage(drawFormula(getXLabel(), false), p.x, p.y, this);
                 }
 
 
@@ -363,5 +385,12 @@ public class Plotter extends GLJPanel {
     private void placeDot(int x, int y, Color c) {
         grid.setPoint(x, y, c);
         repaint();
+    }
+    
+    private Image drawFormula(String formula, boolean rotate)
+    {
+        Image image =  new TeXFormula(formula).createBufferedImage(TeXConstants.STYLE_DISPLAY, (Math.max((int) (15 * zoom), 15)), Color.black, Color.decode("#f4f4f4"));
+        
+        return image;
     }
 }

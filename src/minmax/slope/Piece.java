@@ -1,4 +1,4 @@
-package minmax.model;
+package minmax.slope;
 
 import java.awt.Point;
 

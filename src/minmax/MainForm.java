@@ -15,6 +15,8 @@ public class MainForm extends javax.swing.JFrame {
      */
     public MainForm() {
         initComponents();
+        
+       
     }
 
     /**
@@ -29,6 +31,9 @@ public class MainForm extends javax.swing.JFrame {
         plotter1 = new minmax.gui.Plotter();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        plotter1.setXLabel("\\gamma");
+        plotter1.setYLabel("\\delta");
 
         org.jdesktop.layout.GroupLayout plotter1Layout = new org.jdesktop.layout.GroupLayout(plotter1);
         plotter1.setLayout(plotter1Layout);

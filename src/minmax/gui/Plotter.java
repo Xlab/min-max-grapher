@@ -5,9 +5,12 @@
 package minmax.gui;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import javax.media.opengl.GLJPanel;
+import minmax.Settings;
+import minmax.model.Layer;
+import minmax.model.Piece;
+import minmax.model.Surface;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 
@@ -18,7 +21,6 @@ import org.scilab.forge.jlatexmath.TeXFormula;
 public class Plotter extends GLJPanel {
 
     private Point tmpViewboxCenter;
-    private Point viewboxCorner;
     private Point gridCenter;
     private Point viewboxCenter;
     private int viewboxW;
@@ -29,51 +31,29 @@ public class Plotter extends GLJPanel {
     boolean dragStarted;
     int kX;
     int kY;
+    private Surface surface;
 
     public Plotter() {
         initComponents();
-        gridCenter = new Point(gridBounds / 2, gridBounds / 2);
+
+        gridCenter = new Point(Settings.defaultDimension / 2, Settings.defaultDimension / 2);
         viewboxCenter = gridCenter.getLocation();
         cellSize = 20;
-        viewboxCorner = new Point(0, 0);
-        grid = new Grid(gridBounds);
-    }
-    private Grid grid = new Grid();
-
-    public Grid getGrid() {
-        return grid;
+        surface = new Surface();
     }
 
-    public void setGrid(Grid grid) {
-        this.grid = grid;
-    }
-    private int gridBounds = 1000;
-
-    public int getGridBounds() {
-        return gridBounds;
+    public Surface getSurface() {
+        return surface;
     }
 
-    private int getMinX() {
-        return 0 - gridBounds;
-    }
-
-    private int getMinY() {
-        return 0 - gridBounds;
-    }
-
-    private int getMaxX() {
-        return 0 + gridBounds;
-    }
-
-    private int getMaxY() {
-        return 0 + gridBounds;
+    public void setSurface(Surface surface) {
+        this.surface = surface;
     }
     private double zoom = 1.0;
 
-    public double getZoom() {
+    private double getZoom() {
         return zoom;
     }
-    
     private String xLabel = "X";
 
     public String getXLabel() {
@@ -83,7 +63,6 @@ public class Plotter extends GLJPanel {
     public void setXLabel(String xLabel) {
         this.xLabel = xLabel;
     }
-
     private String yLabel = "Y";
 
     public String getYLabel() {
@@ -94,18 +73,11 @@ public class Plotter extends GLJPanel {
         this.yLabel = yLabel;
     }
 
-
-    public void setZoom(double zoom) {
+    private void setZoom(double zoom) {
         if (zoom >= 0.4 && zoom <= 2) {
             this.zoom = zoom;
             cellSize = (int) (20.0 * zoom);
         }
-    }
-
-    public void setGridBounds(int gridBounds) {
-        this.gridBounds = gridBounds;
-        gridCenter = new Point(gridBounds / 2, gridBounds / 2);
-        repaint();
     }
 
     /**
@@ -164,7 +136,6 @@ public class Plotter extends GLJPanel {
 
     private void mouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mouseDragged
         currentDrag = evt.getPoint();
-        viewboxCorner = currentDrag.getLocation();
         viewboxCenter = new Point(tmpViewboxCenter.x - (currentDrag.x - startDrag.x) / cellSize, tmpViewboxCenter.y - (currentDrag.y - startDrag.y) / cellSize);
         repaint();
     }//GEN-LAST:event_mouseDragged
@@ -217,8 +188,6 @@ public class Plotter extends GLJPanel {
         final boolean shifted_h = (viewboxCenter.y - viewboxH) > gridCenter.y - 3;
         final boolean shifted_w = (viewboxCenter.x + viewboxW) <= gridCenter.x + 1;
 
-        final int testR = 2;
-
         g2.setColor(Color.decode("#f4f4f4"));
         g2.fillRect(0, 0, w, h);
 
@@ -269,7 +238,7 @@ public class Plotter extends GLJPanel {
             if (i == gridCenter.x) {
                 if (!shifted_h) {
                     p.move(column * cellSize + kX - (Math.max((int) (15 * zoom), 15)), (Math.max((int) (5 * zoom), 5)));
-                    g2.drawImage(drawFormula(getYLabel(), true), p.x, p.y, this);
+                    g2.drawImage(drawFormula(getYLabel()), p.x, p.y, this);
                 }
 
                 g2.drawLine(column * cellSize + kX, (shifted_h ? 0 : Math.max((int) (6 * zoom), 4)), column * cellSize + kX, h);
@@ -315,7 +284,7 @@ public class Plotter extends GLJPanel {
             if (i == gridCenter.y) {
                 if (!shifted_w) {
                     p.move(w - (Math.max((int) (15 * zoom), 15)), row * cellSize + kY + 10);
-                    g2.drawImage(drawFormula(getXLabel(), false), p.x, p.y, this);
+                    g2.drawImage(drawFormula(getXLabel()), p.x, p.y, this);
                 }
 
 
@@ -352,30 +321,49 @@ public class Plotter extends GLJPanel {
             ++row;
         }
 
-
-        //Layer 3
+        //Slope layers
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
                 RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         g2.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
-        column = 0;
-        for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 1; ++i) {
-            row = 0;
-            for (int j = viewboxCenter.y - viewboxH; j
-                    <= viewboxCenter.y + viewboxH + 1; ++j) {
-                final int x, y;
-                x = i - gridCenter.x;
-                y = j - gridCenter.y;
-                if (grid.exist(x, y)) {
-                    g2.setColor(grid.getPoint(x, y));
-                    g2.fillOval(column * cellSize + kX - testR,
-                            row * cellSize + kY - testR, testR * 2 + 1, testR * 2 + 1);
+        for (int layer = 0; layer < surface.getLayersCount(); ++layer) {
+
+            Layer l = surface.getLayer(layer);
+            column = 0;
+            for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 1; ++i) {
+                row = 0;
+                for (int j = viewboxCenter.y - viewboxH; j
+                        <= viewboxCenter.y + viewboxH + 1; ++j) {
+                    final int x, y;
+                    x = i - gridCenter.x + Settings.defaultDimension / 2;
+                    y = j - gridCenter.y + Settings.defaultDimension / 2;
+
+                    Piece piece = surface.getLayer(layer).getPiece(x, y + 1);
+                    if (piece != null && piece.getType() != Piece.Type.REGULAR) {
+
+                        g2.drawImage(drawPiece(piece), null, column * cellSize + kX, row * cellSize + kY);
+                        //g2.fillOval(column * cellSize + kX - testR,
+                        //        row * cellSize + kY - testR, testR * 2 + 1, testR * 2 + 1);
+                    } else if (piece != null && piece.getType() == Piece.Type.REGULAR) {
+                        final int x1 = column * cellSize + kX;
+                        final int y1 = (row + 1) * cellSize + kY;
+                        final int x2 = column * cellSize + kX - cellSize;
+                        final int y2 = (row + 1) * cellSize + kY - cellSize;
+                        g2.setColor(piece.getColor());
+                        //g2.setComposite(ImageHelpers.makeComposite((float) 0.5));
+                        //g2.setComposite(ImageHelpers.makeComposite((float) 0.8));
+                        if (layer % 2 == 0) {
+                            g2.drawLine(x1, y2, x2, y1);
+                        } else {
+                            g2.drawLine(x1, y1, x2, y2);
+                        }
+                    }
+                    ++row;
                 }
-                ++row;
+                ++column;
             }
-            ++column;
         }
 
         g.drawImage(buffer, 0, 0, this);
@@ -383,14 +371,51 @@ public class Plotter extends GLJPanel {
     }
 
     private void placeDot(int x, int y, Color c) {
-        grid.setPoint(x, y, c);
+        //grid.setPoint(x, y, c);
         repaint();
     }
-    
-    private Image drawFormula(String formula, boolean rotate)
-    {
-        Image image =  new TeXFormula(formula).createBufferedImage(TeXConstants.STYLE_DISPLAY, (Math.max((int) (15 * zoom), 15)), Color.black, Color.decode("#f4f4f4"));
-        
-        return image;
+
+    private BufferedImage drawFormula(String formula) {
+        BufferedImage image = (BufferedImage) new TeXFormula(formula).createBufferedImage(TeXConstants.STYLE_DISPLAY, (Math.max((int) (15 * zoom), 15)), Color.black, Color.decode("#ffffff"));
+        BufferedImage opaque = ImageHelpers.makeColorTransparent(image, Color.decode("#ffffff"));
+
+        return opaque;
+    }
+
+    private BufferedImage drawPiece(Piece p) {
+        int size = cellSize;
+        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        ((Graphics2D) image.getGraphics()).setBackground(Color.yellow);
+        BufferedImage target = ImageHelpers.makeColorTransparent(image, Color.yellow);
+        Graphics2D g2d = (Graphics2D) target.getGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION,
+                RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_QUALITY);
+
+        g2d.setComposite(ImageHelpers.makeComposite((float) 0.8));
+        g2d.setColor(p.getColor());
+        switch (p.getType()) {
+            case VERTEX:
+                g2d.setStroke(new BasicStroke((float) 4.0));
+                g2d.drawLine(0, size, size, size);
+                g2d.setStroke(new BasicStroke((float) 1.0));
+                g2d.fillOval(0, size, 5, 5);
+                break;
+            case LEFT:
+                g2d.setStroke(new BasicStroke((float) 3.0));
+                g2d.drawLine(0, 0, 0, size);
+                g2d.setStroke(new BasicStroke((float) 1.0));
+                break;
+            case TOP:
+                g2d.setStroke(new BasicStroke((float) 4.0));
+                g2d.drawLine(0, size, size, size);
+                g2d.setStroke(new BasicStroke((float) 1.0));
+                break;
+        }
+
+        return target;
     }
 }

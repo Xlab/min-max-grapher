@@ -1,5 +1,6 @@
 package minmax.model;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 /**
@@ -37,29 +38,33 @@ public class Surface {
         return layers.size();
     }
 
-    public void project(Config c) {
+    public Layer getLayer(int n) {
+        return layers.get(n);
+    }
+
+    public void project(Config config, Color color) {
         Piece p;
 
         for (float i = 0; i < tempLayer.getDimension(); ++i) {
             final float event = i - tempLayer.getDimension() / 2;
             for (float j = 0; j < tempLayer.getDimension(); ++j) {
                 final float time = j - tempLayer.getDimension() / 2;
-                for (ZUinfPoint slope : c.getVertex()) {
+                for (ZUinfPoint slope : config.getVertex()) {
                     if (slope.getX() == event && slope.getY() == time) {
-                        p = new Piece(event, time, Piece.Type.VERTEX);
+                        p = new Piece(event, time, Piece.Type.VERTEX, color);
                         placePiece(p);
                     } else if (slope.getX() == event && time < slope.getY()) {
-                        p = new Piece(event, time, Piece.Type.LEFT);
+                        p = new Piece(event, time, Piece.Type.LEFT, color);
                         placePiece(p);
                     } else if (slope.getY() == time && event > slope.getX()) {
-                        p = new Piece(event, time, Piece.Type.TOP);
+                        p = new Piece(event, time, Piece.Type.TOP, color);
                         placePiece(p);
                     }
                 }
                 
-                for (ZUinfPoint slope : c.getVertex()) {
+                for (ZUinfPoint slope : config.getVertex()) {
                     if (event > slope.getX() && time < slope.getY()) {
-                        p = new Piece(event, time, Piece.Type.REGULAR);
+                        p = new Piece(event, time, Piece.Type.REGULAR, color);
                         placePiece(p);
                     }
                 }
@@ -67,37 +72,5 @@ public class Surface {
         }
         
         sealLayer();
-    }
-
-    public String toString(int layer) {
-        String tmp = "";
-        int d = layers.get(layer).getDimension();
-        
-        for (float i = d/2 - 1; i > -d/2; --i) {
-            for (float j = -d/2 + 1; j < d/2; ++j) {
-                Piece p = layers.get(layer).getPiece(j + d/2, i + d/2);
-                if (p != null) {
-                    switch (p.getType()) {
-                        case VERTEX:
-                            tmp += "1 ";
-                            break;
-                        case TOP:
-                            tmp += "3 ";
-                            break;
-                        case LEFT:
-                            tmp += "2 ";
-                            break;
-                        case REGULAR:
-                            tmp += "0 ";
-                            break;
-                    }
-                } else {
-                    tmp += ". ";
-                }
-            }
-            tmp += "\r\n";
-        }
-
-        return tmp;
     }
 }

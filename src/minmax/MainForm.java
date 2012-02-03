@@ -4,6 +4,10 @@
  */
 package minmax;
 
+import java.awt.Color;
+import minmax.model.Config;
+import minmax.model.Surface;
+
 /**
  *
  * @author Kouprianov Maxim <me@kc.vc> @ SE HSE
@@ -16,7 +20,19 @@ public class MainForm extends javax.swing.JFrame {
     public MainForm() {
         initComponents();
         
-       
+        Surface surface = new Surface();
+        
+        Config a = new Config(2, 1);
+        Config b = new Config(5, 2);
+        Config c = new Config(8, 6);
+        Config d = new Config(10, 11);
+
+        surface.project(a.plus(b).plus(c), Color.red);
+        surface.project(d, Color.blue);
+        
+        plotter1.setSurface(surface);
+        plotter1.setXLabel("\\delta");
+        plotter1.setYLabel("\\gamma");
     }
 
     /**

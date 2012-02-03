@@ -48,7 +48,7 @@ public class Layer {
     public Piece getPiece(float x, float y)
             throws IllegalArgumentException {
         if (y < grid.length && x < grid.length) {
-            return grid[(int) y][(int) x];
+            return grid[grid.length - (int) y][(int) x];
         } else {
             throw new IllegalArgumentException("cannot get piece from (" + x + ";" + y + ")");
         }

@@ -8,5 +8,5 @@ import java.awt.Color;
  */
 public class Settings {
     public final static Color defaultColor = Color.BLACK;
-    public final static int defaultDimension = 1000;
+    public final static int defaultDimension = 50;
 }

@@ -1,6 +1,5 @@
 package minmax.model;
 
-import minmax.slope.Piece;
 import minmax.Settings;
 
 /**
@@ -36,13 +35,26 @@ public class Layer {
         }
     }
 
-    public void placePiece(int x, int y, Piece e)
+    public void placePiece(float x, float y, Piece e)
             throws IllegalArgumentException {
         if (y < grid.length && x < grid.length && e != null) {
-            grid[y][x] = e;
+            grid[(int) y][(int) x] = e;
         } else {
-            throw new IllegalArgumentException("cannot place event(null? "
+            throw new IllegalArgumentException("cannot place piece(null? "
                     + (e != null) + ") on (" + x + ";" + y + ")");
         }
+    }
+
+    public Piece getPiece(float x, float y)
+            throws IllegalArgumentException {
+        if (y < grid.length && x < grid.length) {
+            return grid[(int) y][(int) x];
+        } else {
+            throw new IllegalArgumentException("cannot get piece from (" + x + ";" + y + ")");
+        }
+    }
+
+    public int getDimension() {
+        return grid.length;
     }
 }

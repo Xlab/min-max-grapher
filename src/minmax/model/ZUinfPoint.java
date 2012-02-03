@@ -6,7 +6,7 @@ package minmax.model;
  */
 public class ZUinfPoint {
 
-    public ZUinfPoint(float time, float event) {
+    public ZUinfPoint(float event, float time) {
         this.x = event;
         this.y = time;
     }

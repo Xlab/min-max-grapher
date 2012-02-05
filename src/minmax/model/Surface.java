@@ -2,6 +2,7 @@ package minmax.model;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import minmax.Settings;
 
 /**
  *
@@ -10,67 +11,55 @@ import java.util.ArrayList;
 public class Surface {
 
     private final ArrayList<Layer> layers;
-    private int currentLayer;
-    private Layer tempLayer;
+    private final int dimension;
+
+    public int getDimension() {
+        return dimension;
+    }
 
     public Surface() {
         layers = new ArrayList();
-        tempLayer = new Layer();
-        currentLayer = 0;
+        dimension = Settings.defaultDimension;
     }
 
-    private void placePiece(Piece p) {
-        tempLayer.placePiece(p.getLocation().getX() + tempLayer.getDimension() / 2,
-                p.getLocation().getY() + tempLayer.getDimension() / 2, p);
-    }
-
-    private void sealLayer() {
-        layers.add(tempLayer);
-        tempLayer = new Layer();
-        ++currentLayer;
-    }
-
-    public int getCurrentLayer() {
-        return currentLayer;
+    public Surface(int dimension) {
+        layers = new ArrayList();
+        this.dimension = dimension;
     }
 
     public int getLayersCount() {
         return layers.size();
     }
 
-    public Layer getLayer(int n) {
+    private Layer getLayer(int n) {
         return layers.get(n);
     }
 
-    public void project(Config config, Color color) {
-        Piece p;
+    public void addLayer(Config config, Color color) {
+        layers.add(new Layer(config, color));
+    }
 
-        for (float i = 0; i < tempLayer.getDimension(); ++i) {
-            final float event = i - tempLayer.getDimension() / 2;
-            for (float j = 0; j < tempLayer.getDimension(); ++j) {
-                final float time = j - tempLayer.getDimension() / 2;
-                for (ZUinfPoint slope : config.getVertex()) {
-                    if (slope.getX() == event && slope.getY() == time) {
-                        p = new Piece(event, time, Piece.Type.VERTEX, color);
-                        placePiece(p);
-                    } else if (slope.getX() == event && time < slope.getY()) {
-                        p = new Piece(event, time, Piece.Type.LEFT, color);
-                        placePiece(p);
-                    } else if (slope.getY() == time && event > slope.getX()) {
-                        p = new Piece(event, time, Piece.Type.BOTTOM, color);
-                        placePiece(p);
-                    }
-                }
-                
-                for (ZUinfPoint slope : config.getVertex()) {
-                    if (event > slope.getX() && time < slope.getY()) {
-                        p = new Piece(event, time, Piece.Type.REGULAR, color);
-                        placePiece(p);
-                    }
-                }
+    public Piece getPiece(int layer, int i, int j) {
+        Config config = getLayer(layer).getConfig();
+        Color color = getLayer(layer).getColor();
+        final float event = i - dimension / 2;
+        final float time = (dimension - j) - dimension / 2;
+        for (ZUinfPoint slope : config.getVertex()) {
+            if (slope.getX() == event && slope.getY() == time) {
+                return new Piece(event, time, Piece.Type.VERTEX, color);
+            } else if (slope.getX() == event && time < slope.getY()) {
+                return new Piece(event, time, Piece.Type.LEFT, color);
+            } else if (slope.getY() == time && event > slope.getX()) {
+                return new Piece(event, time, Piece.Type.BOTTOM, color);
             }
         }
-        
-        sealLayer();
+
+        for (ZUinfPoint slope : config.getVertex()) {
+            if (event > slope.getX() && time < slope.getY()) {
+                return new Piece(event, time, Piece.Type.REGULAR, color);
+            }
+        }
+
+        return null;
     }
 }

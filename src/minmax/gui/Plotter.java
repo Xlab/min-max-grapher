@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.media.opengl.GLJPanel;
 import minmax.Settings;
-import minmax.model.Layer;
 import minmax.model.Piece;
 import minmax.model.Surface;
 import org.scilab.forge.jlatexmath.TeXConstants;
@@ -347,7 +346,7 @@ public class Plotter extends GLJPanel {
                     final int x, y;
                     x = i - gridCenter.x + Settings.defaultDimension / 2;
                     y = j - gridCenter.y + Settings.defaultDimension / 2;
-                    Piece piece = surface.getLayer(layer).getPiece(x, y + 1);
+                    Piece piece = surface.getPiece(layer, x, y + 1);
                     if (piece != null) {
                         g2.setColor(piece.getColor());
 
@@ -365,7 +364,6 @@ public class Plotter extends GLJPanel {
                             }
                         } else {
                             g2.setComposite(ImageHelpers.makeComposite(0.3f));
-                            //g2.setComposite(ImageHelpers.makeComposite(0.8f));
                             switch (layer % 2) {
                                 case 0:
                                     g2.drawLine(x1, y2, x2, y1);

@@ -19,9 +19,9 @@ public class MainForm extends javax.swing.JFrame {
      */
     public MainForm() {
         initComponents();
-        
+
         Surface surface = new Surface();
-        
+
         Config a = new Config(2, 1);
         Config b = new Config(5, 2);
         Config c = new Config(8, 6);
@@ -29,11 +29,11 @@ public class MainForm extends javax.swing.JFrame {
         Config e = new Config(7, 3);
         Config f = new Config(14, 0);
 
-        surface.project(a.plus(b).plus(c), Color.red);
-        surface.project(d, Color.blue);
-        surface.project(e, Color.green);
-        surface.project(f, Color.cyan);
-        
+        surface.addLayer(a.plus(b).plus(c), Color.red);
+        surface.addLayer(d, Color.blue);
+        surface.addLayer(e, Color.green);
+        surface.addLayer(f, Color.cyan);
+
         plotter1.setSurface(surface);
         plotter1.setXLabel("\\delta");
         plotter1.setYLabel("\\gamma");

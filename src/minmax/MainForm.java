@@ -29,7 +29,7 @@ public class MainForm extends javax.swing.JFrame {
         Config e = new Config(7, 3);
         Config f = new Config(14, 0);
 
-        surface.addLayer(a.plus(b).plus(c), Color.red);
+        surface.addLayer(a.plus(b).plus(c).plus(d), Color.red);
         surface.addLayer(d, Color.blue);
         surface.addLayer(e, Color.green);
         surface.addLayer(f, Color.cyan);

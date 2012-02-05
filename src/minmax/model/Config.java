@@ -1,7 +1,6 @@
 package minmax.model;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  *
@@ -50,27 +49,75 @@ public class Config {
         };
     }
 
+    public ZUinfPoint getVertex(int i)
+            throws IllegalArgumentException {
+        if (i < vertex.length) {
+            return vertex[i];
+        } else {
+            throw new IllegalArgumentException("Cannot acces to " + i
+                    + "th element of array (size: " + vertex.length + ")");
+        }
+    }
+
     public Config plus(Config b) {
-        ArrayList set = new ArrayList();
-        
-        for (ZUinfPoint v2 : b.getVertex()) {
-            for (ZUinfPoint v1 : this.getVertex()) {
-                if (v1.getX() <= v2.getX() && v1.getY() >= v2.getY()) {
-                    set.add(v1);
-                } else if (v1.getX() > v2.getX() && v1.getY() < v2.getY()) {
-                    set.add(v2);
-                } else {
-                    set.add(v1);
-                    set.add(v2);
+        if (b.getVertexCount() < 2) {
+            if (b.getVertexCount() < 1) {
+                return this;
+            }
+
+            ArrayList set = new ArrayList();
+            ZUinfPoint taken = b.getVertex(0);
+
+            for (ZUinfPoint my : this.getVertex()) {
+                if (taken.getX() >= my.getX() && taken.getY() <= my.getY()) {
+                    taken = null; //useless
+                    break;
                 }
             }
+
+            for (ZUinfPoint my : this.getVertex()) {
+                if (taken != null) {
+                    if (taken.getX() < my.getX() && taken.getY() > my.getY()) {
+                        set.add(taken);
+                    } else {
+                        set.add(my);
+                        set.add(taken);
+                    }
+                    taken = null;
+                } else {
+                    set.add(my);
+                }
+            }
+
+            Collections.sort(set, new Comparator<ZUinfPoint>(){
+                @Override
+                public int compare(ZUinfPoint o1, ZUinfPoint o2) {
+                    return (int)Math.signum(o2.getX() - o1.getX());
+                }
+            });
+            return new Config(set);
+        } else {
+            Config c = new Config(new ArrayList<ZUinfPoint>()).plus(this);
+
+            for (ZUinfPoint taken : b.getVertex()) {
+                c.plus(new Config(taken.getX(), taken.getY()));
+            }
+
+            return c;
+        }
+    }
+
+    public int getVertexCount() {
+        return vertex.length;
+    }
+
+    @Override
+    public String toString() {
+        String string = "";
+        for (ZUinfPoint point : this.getVertex()) {
+            string += point.toString() + "\n";
         }
 
-        return new Config(set);
-    }
-    
-    public void project(Surface s)
-    {
-        
+        return string;
     }
 }

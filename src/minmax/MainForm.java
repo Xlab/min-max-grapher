@@ -26,9 +26,13 @@ public class MainForm extends javax.swing.JFrame {
         Config b = new Config(5, 2);
         Config c = new Config(8, 6);
         Config d = new Config(10, 11);
+        Config e = new Config(7, 3);
+        Config f = new Config(14, 0);
 
         surface.project(a.plus(b).plus(c), Color.red);
         surface.project(d, Color.blue);
+        surface.project(e, Color.green);
+        surface.project(f, Color.cyan);
         
         plotter1.setSurface(surface);
         plotter1.setXLabel("\\delta");

@@ -31,7 +31,7 @@ public class Piece {
     
     static public enum Type {
         VERTEX,
-        TOP,
+        BOTTOM,
         LEFT,
         REGULAR
     };

@@ -57,7 +57,7 @@ public class Surface {
                         p = new Piece(event, time, Piece.Type.LEFT, color);
                         placePiece(p);
                     } else if (slope.getY() == time && event > slope.getX()) {
-                        p = new Piece(event, time, Piece.Type.TOP, color);
+                        p = new Piece(event, time, Piece.Type.BOTTOM, color);
                         placePiece(p);
                     }
                 }

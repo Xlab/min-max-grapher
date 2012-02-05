@@ -185,8 +185,15 @@ public class Plotter extends GLJPanel {
         viewboxW = w / (2 * cellSize);
         viewboxH = h / (2 * cellSize);
 
-        final boolean shifted_h = (viewboxCenter.y - viewboxH) > gridCenter.y - 3;
-        final boolean shifted_w = (viewboxCenter.x + viewboxW) <= gridCenter.x + 1;
+        final int shift = 4;
+
+        final int lowX = viewboxCenter.x - viewboxW;
+        final int hiX = viewboxCenter.x + viewboxW;
+        final int lowY = viewboxCenter.y - viewboxH;
+        final int hiY = viewboxCenter.y + viewboxH;
+
+        final boolean shifted_h = lowY > gridCenter.y - 3;
+        final boolean shifted_w = hiX <= gridCenter.x + 1;
 
         g2.setColor(Color.decode("#f4f4f4"));
         g2.fillRect(0, 0, w, h);
@@ -205,8 +212,8 @@ public class Plotter extends GLJPanel {
         g2.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_SPEED);
 
-        int column = 0;
-        for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 2; ++i) {
+        int column = -shift;
+        for (int i = lowX - shift; i <= hiX + shift; ++i) {
             if (i != gridCenter.x) {
                 g2.drawLine(column * cellSize + kX, 0, column * cellSize + kX, h);
             }
@@ -214,8 +221,8 @@ public class Plotter extends GLJPanel {
             ++column;
         }
 
-        int row = 0;
-        for (int i = viewboxCenter.y - viewboxH; i <= viewboxCenter.y + viewboxH + 2; ++i) {
+        int row = -shift;
+        for (int i = lowY - shift; i <= hiY + shift; ++i) {
             if (i != gridCenter.y) {
                 g2.drawLine(0, row * cellSize + kY, w, row * cellSize + kY);
             }
@@ -234,7 +241,7 @@ public class Plotter extends GLJPanel {
                 RenderingHints.VALUE_RENDER_SPEED);
 
         column = 0;
-        for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 2; ++i) {
+        for (int i = lowX; i <= hiX; ++i) {
             if (i == gridCenter.x) {
                 if (!shifted_h) {
                     p.move(column * cellSize + kX - (Math.max((int) (15 * zoom), 15)), (Math.max((int) (5 * zoom), 5)));
@@ -244,23 +251,25 @@ public class Plotter extends GLJPanel {
                 g2.drawLine(column * cellSize + kX, (shifted_h ? 0 : Math.max((int) (6 * zoom), 4)), column * cellSize + kX, h);
 
                 row = (shifted_h ? 0 : 2);
-                for (int j = viewboxCenter.y - viewboxH; j <= viewboxCenter.y + viewboxH + 2; ++j) {
+                for (int j = lowY; j <= hiY; ++j) {
                     if (j + (shifted_h ? 0 : 2) != gridCenter.y) {
                         //засечки
                         g2.drawLine(column * cellSize + kX - 2, row * cellSize + kY, column * cellSize + kX + 2, row * cellSize + kY);
 
-                        //цифры
-                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON);
-                        g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int) (8 * zoom), 8)));
+                        if (zoom >= 0.8) {
+                            //цифры
+                            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                    RenderingHints.VALUE_ANTIALIAS_ON);
+                            g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int) (8 * zoom), 8)));
 
-                        final int val = -(j - gridCenter.y + (shifted_h ? 0 : 2));
-                        g2.drawString("" + val,
-                                column * cellSize + kX - (Math.min((int) (8 * zoom), 8) / 2)
-                                - (("" + val).length() * (Math.min((int) (8 * zoom), 8)) / 2),
-                                row * cellSize + kY + (Math.min((int) (8 * zoom), 8)) / 2);
-                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_OFF);
+                            final int val = -(j - gridCenter.y + (shifted_h ? 0 : 2));
+                            g2.drawString("" + val,
+                                    column * cellSize + kX - (Math.min((int) (8 * zoom), 8) / 2)
+                                    - (("" + val).length() * (Math.min((int) (8 * zoom), 8)) / 2),
+                                    row * cellSize + kY + (Math.min((int) (8 * zoom), 8)) / 2);
+                            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                    RenderingHints.VALUE_ANTIALIAS_OFF);
+                        }
                     }
                     ++row;
                 }
@@ -280,7 +289,7 @@ public class Plotter extends GLJPanel {
         }
 
         row = 0;
-        for (int i = viewboxCenter.y - viewboxH; i <= viewboxCenter.y + viewboxH + 2; ++i) {
+        for (int i = lowY; i <= hiY; ++i) {
             if (i == gridCenter.y) {
                 if (!shifted_w) {
                     p.move(w - (Math.max((int) (15 * zoom), 15)), row * cellSize + kY + 10);
@@ -293,18 +302,20 @@ public class Plotter extends GLJPanel {
 
                 //засечки & цифры
                 column = 0;
-                for (int j = viewboxCenter.x - viewboxW; j < viewboxCenter.x + viewboxW + (shifted_w ? 2 : 0); ++j) {
+                for (int j = lowX; j <= hiX; ++j) {
                     if (j != gridCenter.x) {
                         //засечки
                         g2.drawLine(column * cellSize + kX, row * cellSize + kY - 2, column * cellSize + kX, row * cellSize + kY + 2);
 
-                        //цифры
-                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_ON);
-                        g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int) (8 * zoom), 8)));
-                        g2.drawString("" + (j - gridCenter.x), column * cellSize + kX - (Math.min((int) (8 * zoom), 8) / 2), row * cellSize + kY + Math.min((int) (8 * zoom), 8) + 3);
-                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                RenderingHints.VALUE_ANTIALIAS_OFF);
+                        if (zoom >= 0.8) {
+                            //цифры
+                            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                    RenderingHints.VALUE_ANTIALIAS_ON);
+                            g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int) (8 * zoom), 8)));
+                            g2.drawString("" + (j - gridCenter.x), column * cellSize + kX - (Math.min((int) (8 * zoom), 8) / 2), row * cellSize + kY + Math.min((int) (8 * zoom), 8) + 3);
+                            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                    RenderingHints.VALUE_ANTIALIAS_OFF);
+                        }
                     }
                     ++column;
                 }
@@ -329,35 +340,42 @@ public class Plotter extends GLJPanel {
         g2.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
         for (int layer = 0; layer < surface.getLayersCount(); ++layer) {
-
-            Layer l = surface.getLayer(layer);
-            column = 0;
-            for (int i = viewboxCenter.x - viewboxW; i <= viewboxCenter.x + viewboxW + 1; ++i) {
-                row = 0;
-                for (int j = viewboxCenter.y - viewboxH; j
-                        <= viewboxCenter.y + viewboxH + 1; ++j) {
+            column = -shift;
+            for (int i = lowX - shift; i <= hiX + shift; ++i) {
+                row = -shift;
+                for (int j = lowY - shift; j <= hiY + shift; ++j) {
                     final int x, y;
                     x = i - gridCenter.x + Settings.defaultDimension / 2;
                     y = j - gridCenter.y + Settings.defaultDimension / 2;
-
                     Piece piece = surface.getLayer(layer).getPiece(x, y + 1);
-                    if (piece != null && piece.getType() != Piece.Type.REGULAR) {
-
-                        g2.drawImage(drawPiece(piece), null, column * cellSize + kX, row * cellSize + kY);
-                        //g2.fillOval(column * cellSize + kX - testR,
-                        //        row * cellSize + kY - testR, testR * 2 + 1, testR * 2 + 1);
-                    } else if (piece != null && piece.getType() == Piece.Type.REGULAR) {
-                        final int x1 = column * cellSize + kX;
-                        final int y1 = (row + 1) * cellSize + kY;
-                        final int x2 = column * cellSize + kX - cellSize;
-                        final int y2 = (row + 1) * cellSize + kY - cellSize;
+                    if (piece != null) {
                         g2.setColor(piece.getColor());
-                        //g2.setComposite(ImageHelpers.makeComposite((float) 0.5));
-                        //g2.setComposite(ImageHelpers.makeComposite((float) 0.8));
-                        if (layer % 2 == 0) {
-                            g2.drawLine(x1, y2, x2, y1);
+
+                        final int x1 = (column) * cellSize + kX;
+                        final int y1 = (row + 1) * cellSize + kY;
+                        final int x2 = (column) * cellSize + kX - cellSize;
+                        final int y2 = (row + 1) * cellSize + kY - cellSize;
+
+                        if (piece.getType() != Piece.Type.REGULAR) {
+                            g2.drawImage(drawPiece(piece), null, column * cellSize + kX, row * cellSize + kY + 1);
+
+                            if (piece.getType() == Piece.Type.VERTEX) {
+                                final int R = 2;
+                                g2.fillOval(x1 - R, y1 - R, R * 2 + 1, R * 2 + 1);
+                            }
                         } else {
-                            g2.drawLine(x1, y1, x2, y2);
+                            g2.setComposite(ImageHelpers.makeComposite(0.3f));
+                            //g2.setComposite(ImageHelpers.makeComposite(0.8f));
+                            switch (layer % 2) {
+                                case 0:
+                                    g2.drawLine(x1, y2, x2, y1);
+                                    break;
+                                case 1:
+                                    g2.drawLine(x1, y1, x2, y2);
+                                    break;
+                            }
+                            g2.fillRect(x1 - cellSize, y1 - cellSize, cellSize, cellSize);
+                            g2.setComposite(AlphaComposite.SrcOver);
                         }
                     }
                     ++row;
@@ -395,24 +413,24 @@ public class Plotter extends GLJPanel {
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
 
-        g2d.setComposite(ImageHelpers.makeComposite((float) 0.8));
+        g2d.setComposite(ImageHelpers.makeComposite(0.8f));
         g2d.setColor(p.getColor());
         switch (p.getType()) {
             case VERTEX:
-                g2d.setStroke(new BasicStroke((float) 4.0));
+                g2d.setStroke(new BasicStroke(4.0f));
                 g2d.drawLine(0, size, size, size);
-                g2d.setStroke(new BasicStroke((float) 1.0));
+                g2d.setStroke(new BasicStroke(1.0f));
                 g2d.fillOval(0, size, 5, 5);
                 break;
             case LEFT:
-                g2d.setStroke(new BasicStroke((float) 3.0));
+                g2d.setStroke(new BasicStroke(3.0f));
                 g2d.drawLine(0, 0, 0, size);
-                g2d.setStroke(new BasicStroke((float) 1.0));
+                g2d.setStroke(new BasicStroke(1.0f));
                 break;
-            case TOP:
-                g2d.setStroke(new BasicStroke((float) 4.0));
+            case BOTTOM:
+                g2d.setStroke(new BasicStroke(4.0f));
                 g2d.drawLine(0, size, size, size);
-                g2d.setStroke(new BasicStroke((float) 1.0));
+                g2d.setStroke(new BasicStroke(1.0f));
                 break;
         }
 

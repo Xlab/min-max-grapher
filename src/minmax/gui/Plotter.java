@@ -362,7 +362,7 @@ public class Plotter extends GLJPanel {
                                 final int R = 2;
                                 g2.fillOval(x1 - R, y1 - R, R * 2 + 1, R * 2 + 1);
                             }
-                        } else {
+                        } else if(surface.needShadow(layer)){
                             g2.setComposite(ImageHelpers.makeComposite(0.3f));
                             switch (layer % 2) {
                                 case 0:

@@ -22,21 +22,39 @@ public class MainForm extends javax.swing.JFrame {
 
         Surface surface = new Surface();
 
-        Config a = new Config(2, 1);
-        Config b = new Config(5, 2);
-        Config c = new Config(8, 6);
-        Config d = new Config(10, 11);
-        Config e = new Config(7, 3);
-        Config f = new Config(14, 0);
-
-        surface.addLayer(a.plus(b).plus(c).plus(d), Color.red);
-        surface.addLayer(d, Color.blue);
-        surface.addLayer(e, Color.green);
-        surface.addLayer(f, Color.cyan);
+//        Config a = new Config(2, 2);
+//        Config b = new Config(6, 6);
+//        Config c = new Config(8, 6);
+//        Config d = new Config(10, 11);
+//        Config e = new Config(7, 3);
+//        Config f = new Config(14, 0);
+//
+//        surface.addLayer(a.plus(b), Color.red);
+//        surface.addLayer(d, Color.blue);
+//        surface.addLayer(e, Color.green);
+//        surface.addLayer(f, Color.cyan);
+        
+        Config lol = new Config(0, 0);
+        for(int i = 2; i< 200; i += 2)
+        {
+            lol = lol.plus(new Config(i, i));
+            
+        }
+        
+        surface.addLayer(lol, Color.red);
+        
+        Config blue = new Config(3, 3);
+        for(int i = 6; i< 200; i += 3)
+        {
+            blue = blue.plus(new Config(i, i));
+            
+        }
+        
+        surface.addLayer(blue, Color.blue, false);
 
         plotter1.setSurface(surface);
         plotter1.setXLabel("\\delta");
-        plotter1.setYLabel("\\gamma");
+        plotter1.setYLabel("t");
     }
 
     /**

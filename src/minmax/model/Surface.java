@@ -38,6 +38,10 @@ public class Surface {
     public void addLayer(Config config, Color color) {
         layers.add(new Layer(config, color));
     }
+    
+    public void addLayer(Config config, Color color, boolean shadow) {
+        layers.add(new Layer(config, color, shadow));
+    }
 
     public Piece getPiece(int layer, int i, int j) {
         Config config = getLayer(layer).getConfig();
@@ -62,5 +66,10 @@ public class Surface {
         }
 
         return null;
+    }
+    
+    public boolean needShadow(int layer)
+    {
+        return getLayer(layer).needShadow();
     }
 }

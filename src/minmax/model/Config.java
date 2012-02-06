@@ -1,6 +1,7 @@
 package minmax.model;
 
 import java.util.*;
+import minmax.Settings;
 
 /**
  *
@@ -59,7 +60,25 @@ public class Config {
         }
     }
 
+    public int getVertexCount() {
+        return vertex.length;
+    }
+
+    @Override
+    public String toString() {
+        String string = "";
+        for (ZUinfPoint point : this.getVertex()) {
+            string += point.toString() + "\n";
+        }
+
+        return string;
+    }
+
     public Config plus(Config b) {
+        if (this.getVertexCount() < 1) {
+            return b;
+        }
+
         if (b.getVertexCount() < 2) {
             if (b.getVertexCount() < 1) {
                 return this;
@@ -69,30 +88,37 @@ public class Config {
             ZUinfPoint taken = b.getVertex(0);
 
             for (ZUinfPoint my : this.getVertex()) {
-                if (taken.getX() >= my.getX() && taken.getY() <= my.getY()) {
+                if(taken.getX() >= my.getX() && taken.getY() <= my.getY())
+                {
                     taken = null; //useless
                     break;
                 }
             }
-
+            
             for (ZUinfPoint my : this.getVertex()) {
-                if (taken != null) {
-                    if (taken.getX() < my.getX() && taken.getY() > my.getY()) {
-                        set.add(taken);
-                    } else {
-                        set.add(my);
-                        set.add(taken);
-                    }
+                if (taken != null
+                        && (Math.signum(taken.getX() - my.getX()) == Math.signum(taken.getY() - my.getY()))
+                        && (taken.getX() != my.getX())) {
+                    set.add(my);
+                    set.add(taken);
                     taken = null;
+                } else if (taken != null) {
+                    final ZUinfPoint tmp = new ZUinfPoint(Math.min(my.getX(), taken.getX()),
+                            Math.max(my.getY(), taken.getY()));
+                    set.add(tmp);
+                    if (tmp.equals(taken)) {
+                        taken = null;
+                    }
                 } else {
                     set.add(my);
                 }
             }
+            
+            Collections.sort(set, new Comparator<ZUinfPoint>() {
 
-            Collections.sort(set, new Comparator<ZUinfPoint>(){
                 @Override
                 public int compare(ZUinfPoint o1, ZUinfPoint o2) {
-                    return (int)Math.signum(o2.getX() - o1.getX());
+                    return (int) Math.signum(o2.getX() - o1.getX());
                 }
             });
             return new Config(set);
@@ -107,17 +133,32 @@ public class Config {
         }
     }
 
-    public int getVertexCount() {
-        return vertex.length;
+    public Config times(Config b) {
+        Config target = new Config(new ArrayList<ZUinfPoint>());
+        for (ZUinfPoint my : this.getVertex()) {
+            for (ZUinfPoint taken : b.getVertex()) {
+                Config c = new Config(my.getX() + taken.getX(), my.getY() + taken.getY());
+                target = target.plus(c);
+            }
+        }
+        return target;
     }
 
-    @Override
-    public String toString() {
-        String string = "";
-        for (ZUinfPoint point : this.getVertex()) {
-            string += point.toString() + "\n";
+    public Config power(int power) {
+        ArrayList set = new ArrayList();
+        for (ZUinfPoint my : this.getVertex()) {
+            set.add(new ZUinfPoint(my.getX() * power, my.getY() * power));
         }
 
-        return string;
+        return new Config(set);
+    }
+
+    public Config star() {
+        Config e = new Config(0, 0);
+        for (int i = 1; i < Settings.defaultPrecision; ++i) {
+            e = e.plus(this.power(i));
+        }
+
+        return e;
     }
 }

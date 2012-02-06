@@ -1,6 +1,9 @@
 package minmax.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import minmax.Settings;
 
 /**
@@ -17,6 +20,14 @@ public class Config {
 
     private Config(ArrayList<ZUinfPoint> list) {
         vertex = list.toArray(new ZUinfPoint[]{});
+    }
+    
+    private Config(ZUinfPoint[] set) {
+        vertex = set;
+    }
+
+    public Config() {
+        vertex = new ZUinfPoint[]{new ZUinfPoint(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY)};
     }
 
     public Iterable<ZUinfPoint> getVertex() {
@@ -75,6 +86,10 @@ public class Config {
     }
 
     public Config plus(Config b) {
+        if (this.getVertexCount() < 1) {
+            return b;
+        }
+
         if (b.getVertexCount() < 2) {
             if (b.getVertexCount() < 1) {
                 return this;
@@ -92,16 +107,13 @@ public class Config {
 
             for (ZUinfPoint my : this.getVertex()) {
                 if (taken != null) {
-                    if (taken.getX() < my.getX() && taken.getY() > my.getY()) {
-                        set.add(taken);
-                    } else {
-                        set.add(taken);
+                    set.add(taken);
+                    if (!(taken.getX() < my.getX() && taken.getY() > my.getY())) {
+                        my = markUseless(set, my);
 
-//                        my = markUseless(set, my);
-//
-//                        if (my != null) {
-                        set.add(my);
-//                        }
+                        if (my != null) {
+                            set.add(my);
+                        }
                     }
                     taken = null;
                 } else {
@@ -117,15 +129,21 @@ public class Config {
 
                 @Override
                 public int compare(ZUinfPoint o1, ZUinfPoint o2) {
-                    return (int) Math.signum(o2.getX() - o1.getX());
+                    //return (int) Math.signum(o2.getX() - o1.getX());
+                    if (o2.getX() < o1.getX()) {
+                        return -1;
+                    } else if (o2.getX() > o1.getX()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
                 }
             });
             return new Config(set);
         } else {
-            Config c = new Config(new ArrayList<ZUinfPoint>()).plus(this);
-
+            Config c = this;
             for (ZUinfPoint taken : b.getVertex()) {
-                c.plus(new Config(taken.getX(), taken.getY()));
+                c = c.plus(new Config(taken.getX(), taken.getY()));
             }
 
             return c;
@@ -143,23 +161,23 @@ public class Config {
     }
 
     public Config times(Config b) {
-        Config target = new Config(new ArrayList<ZUinfPoint>());
+        ArrayList<ZUinfPoint> set = new ArrayList();
         for (ZUinfPoint my : this.getVertex()) {
             for (ZUinfPoint taken : b.getVertex()) {
-                Config c = new Config(my.getX() + taken.getX(), my.getY() + taken.getY());
-                target = target.plus(c);
+                set.add(new ZUinfPoint(my.getX() + taken.getX(), my.getY() + taken.getY()));
             }
         }
-        return target;
+        return new Config(set).plus(new Config());
     }
 
     public Config power(int power) {
-        ArrayList<ZUinfPoint> set = new ArrayList();
-        for (ZUinfPoint my : this.getVertex()) {
-            set.add(new ZUinfPoint(my.getX() * power, my.getY() * power));
+        Config c = new Config();
+        ZUinfPoint tmp = this.getVertex(0); 
+        for (int i = 0; i< this.getVertexCount(); tmp = this.getVertex(i), ++i) {
+            c = c.plus(new Config(tmp.getX() * power, tmp.getY() * power));
         }
 
-        return new Config(set);
+        return c;
     }
 
     public Config star() {
@@ -169,5 +187,16 @@ public class Config {
         }
 
         return e;
+    }
+
+    @Override
+    protected Object clone() {
+        ZUinfPoint[] set = new ZUinfPoint[this.getVertexCount()];
+        int i = 0;
+        for (ZUinfPoint v : this.getVertex()) {
+            set[i++] = (new ZUinfPoint(v.getX(), v.getY()));
+        }
+
+        return new Config(set);
     }
 }

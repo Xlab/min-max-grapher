@@ -259,7 +259,7 @@ public class Plotter extends GLJPanel {
                             //цифры
                             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                     RenderingHints.VALUE_ANTIALIAS_ON);
-                            g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int) (8 * zoom), 8)));
+                            g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int) (10 * zoom), 10)));
 
                             final int val = -(j - gridCenter.y + (shifted_h ? 0 : 2));
                             g2.drawString("" + val,
@@ -310,7 +310,7 @@ public class Plotter extends GLJPanel {
                             //цифры
                             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                     RenderingHints.VALUE_ANTIALIAS_ON);
-                            g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int) (8 * zoom), 8)));
+                            g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int) (10 * zoom), 10)));
                             g2.drawString("" + (j - gridCenter.x), column * cellSize + kX - (Math.min((int) (8 * zoom), 8) / 2), row * cellSize + kY + Math.min((int) (8 * zoom), 8) + 3);
                             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                     RenderingHints.VALUE_ANTIALIAS_OFF);

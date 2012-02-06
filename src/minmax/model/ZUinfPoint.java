@@ -10,6 +10,11 @@ public class ZUinfPoint {
         this.x = event;
         this.y = time;
     }
+    
+    public ZUinfPoint() {
+        this.x = Float.POSITIVE_INFINITY;
+        this.y = Float.NEGATIVE_INFINITY;
+    }
 
     private float x;
 

@@ -35,4 +35,9 @@ public class Piece {
         LEFT,
         REGULAR
     };
+
+    @Override
+    public String toString() {
+        return location.toTeXString();
+    }
 }

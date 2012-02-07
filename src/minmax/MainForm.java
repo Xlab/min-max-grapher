@@ -22,42 +22,43 @@ public class MainForm extends javax.swing.JFrame {
 
         Surface surface = new Surface();
 
-        Config a = new Config(1, 2);
+        Config a = new Config(0, 0);
         Config b = new Config(4, 3);
         Config c = new Config(8, 6);
         Config d = new Config(10, 11);
         Config e = b.star();
         Config f = new Config(14, 0);
 
-//        Config g = a.plus(b).plus(c).plus(d).plus(f);
-//        surface.addLayer(a, Color.orange, false);
-//        surface.addLayer(b, Color.green, false);
-//        surface.addLayer(c, Color.blue, false);
-//        surface.addLayer(d, Color.cyan, false);
-//        surface.addLayer(f, Color.black, false);
+        Config g = a.plus(b).plus(c).plus(d).plus(f);
+        surface.addLayer(a, Color.orange, false);
+        surface.addLayer(b, Color.green, false);
+        surface.addLayer(c, Color.blue, false);
+        surface.addLayer(d, Color.cyan, false);
+        surface.addLayer(f, Color.black, false);
+        surface.addLayer(g, Color.red);
         
 //  Config t = a.plus(b);
-        Config g = new Config();
-        long start = System.currentTimeMillis();
-        for(int i=0; i< 100; ++i){
-          g = a.star().times(b.star()).times(c.star());
-        }
-        long end = System.currentTimeMillis();
-        System.out.println((end-start) / 100.0);
+//        Config g = new Config();
+//        long start = System.currentTimeMillis();
+//        for (int i = 0; i < 100000000; ++i) {
+//            g = a.plus(b);
+//        }
+//        long end = System.currentTimeMillis();
+//        System.out.println(100000000.0 / (end - start));
 //        System.out.println(g.getVertexCount());
 
         //surface.addLayer(a.star(), Color.green, false);
         //surface.addLayer(b.star(), Color.blue, false);
-        
-        surface.addLayer(g, Color.red);
-        
+
+       // surface.addLayer(g, Color.red);
+
         //surface.addLayer(new Config(0, -4).plus(new Config(5, -4)).plus(new Config(3, -2)).plus(new Config(8, -2)), Color.green);
         //ystem.out.println((a.plus(b)).star().plus(c));
         //surface.addLayer(a.plus(b).plus(c).plus(d), Color.blue);
         //surface.addLayer(a.plus(b).plus(c).plus(d), Color.green);
-//        
+        
 //        Config lol = new Config(0, 0);
-//        for(int i = 1; i< 20000; i += 1)
+//        for(int i = 1; i< 200; i += 1)
 //        {
 //            lol = lol.plus(new Config(i, i));
 //            
@@ -66,12 +67,12 @@ public class MainForm extends javax.swing.JFrame {
 //        surface.addLayer(lol, Color.red, false);
 //        
 //        Config blue = new Config(3, 3);
-//        for(int i = 2; i< 20000; i += 2)
+//        for(int i = 2; i< 200; i += 2)
 //        {
 //            blue = blue.plus(new Config(i, i));
 //            
 //        }
-//        
+        
 //        surface.addLayer(blue, Color.blue, false);
 
         plotter1.setSurface(surface);

@@ -40,6 +40,15 @@ public class Plotter extends GLJPanel {
         cellSize = 20;
         surface = new Surface();
     }
+    private int axisFontSize = 10;
+
+    public int getAxisFontSize() {
+        return axisFontSize;
+    }
+
+    public void setAxisFontSize(int axisFontSize) {
+        this.axisFontSize = axisFontSize;
+    }
 
     public Surface getSurface() {
         return surface;
@@ -244,7 +253,7 @@ public class Plotter extends GLJPanel {
             if (i == gridCenter.x) {
                 if (!shifted_h) {
                     p.move(column * cellSize + kX - (Math.max((int) (15 * zoom), 15)), (Math.max((int) (5 * zoom), 5)));
-                    g2.drawImage(drawFormula(getYLabel()), p.x, p.y, this);
+                    g2.drawImage(drawFormula(getYLabel(), 15), p.x, p.y, this);
                 }
 
                 g2.drawLine(column * cellSize + kX, (shifted_h ? 0 : Math.max((int) (6 * zoom), 4)), column * cellSize + kX, h);
@@ -257,17 +266,14 @@ public class Plotter extends GLJPanel {
 
                         if (zoom >= 0.8) {
                             //цифры
-                            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                    RenderingHints.VALUE_ANTIALIAS_ON);
-                            g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int) (10 * zoom), 10)));
+                            final int fMin = Math.min((int) (axisFontSize * zoom), axisFontSize);
+                            g2.setFont(new Font("Arial", Font.PLAIN, fMin));
 
                             final int val = -(j - gridCenter.y + (shifted_h ? 0 : 2));
                             g2.drawString("" + val,
-                                    column * cellSize + kX - (Math.min((int) (8 * zoom), 8) / 2)
-                                    - (("" + val).length() * (Math.min((int) (8 * zoom), 8)) / 2),
-                                    row * cellSize + kY + (Math.min((int) (8 * zoom), 8)) / 2);
-                            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                    RenderingHints.VALUE_ANTIALIAS_OFF);
+                                    column * cellSize + kX - (fMin / 2)
+                                    - (("" + val).length() * fMin / 2),
+                                    row * cellSize + kY + fMin / 2);
                         }
                     }
                     ++row;
@@ -292,7 +298,7 @@ public class Plotter extends GLJPanel {
             if (i == gridCenter.y) {
                 if (!shifted_w) {
                     p.move(w - (Math.max((int) (15 * zoom), 15)), row * cellSize + kY + 10);
-                    g2.drawImage(drawFormula(getXLabel()), p.x, p.y, this);
+                    g2.drawImage(drawFormula(getXLabel(), 15), p.x, p.y, this);
                 }
 
 
@@ -308,12 +314,10 @@ public class Plotter extends GLJPanel {
 
                         if (zoom >= 0.8) {
                             //цифры
-                            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                    RenderingHints.VALUE_ANTIALIAS_ON);
-                            g2.setFont(new Font("Arial", Font.PLAIN, Math.min((int) (10 * zoom), 10)));
-                            g2.drawString("" + (j - gridCenter.x), column * cellSize + kX - (Math.min((int) (8 * zoom), 8) / 2), row * cellSize + kY + Math.min((int) (8 * zoom), 8) + 3);
-                            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                    RenderingHints.VALUE_ANTIALIAS_OFF);
+                            final int fMin = Math.min((int) (axisFontSize * zoom), axisFontSize);
+                            g2.setFont(new Font("Arial", Font.PLAIN, fMin));
+                            g2.drawString("" + (j - gridCenter.x), column * cellSize + kX
+                                    - (fMin / 2), row * cellSize + kY + fMin + 3);
                         }
                     }
                     ++column;
@@ -361,17 +365,18 @@ public class Plotter extends GLJPanel {
                                 g2.drawImage(drawPiece(new Piece(piece.getLocation().getX(), piece.getLocation().getY(),
                                         Piece.Type.LEFT, piece.getColor())), null, column * cellSize + kX, row * cellSize + kY + 1);
 
-                            }else if(surface.getPiece(layer, x - 1, y + 1) != null && (piece.getType() == Piece.Type.VERTEX)
-                                    && surface.getPiece(layer, x - 1, y + 1).getType() == Piece.Type.VERTEX)
-                            {
+                            } else if (surface.getPiece(layer, x - 1, y + 1) != null && (piece.getType() == Piece.Type.VERTEX)
+                                    && surface.getPiece(layer, x - 1, y + 1).getType() == Piece.Type.VERTEX) {
                                 g2.drawImage(drawPiece(new Piece(piece.getLocation().getX(), piece.getLocation().getY(),
                                         Piece.Type.BOTTOM, piece.getColor())), null, column * cellSize + kX, row * cellSize + kY + 1);
-                            }
-                            else {
+                            } else {
                                 g2.drawImage(drawPiece(piece), null, column * cellSize + kX, row * cellSize + kY + 1);
                                 if (piece.getType() == Piece.Type.VERTEX) {
                                     final int R = 2;
                                     g2.fillOval(x1 - R, y1 - R, R * 2 + 1, R * 2 + 1);
+                                    if (zoom >= 1.2) {
+                                    g2.drawImage(drawFormula(piece.toString(), 14), null, x1  - cellSize, y1 - cellSize);
+                                    }
                                 }
                             }
                         } else if (surface.needShadow(layer)) {
@@ -400,11 +405,11 @@ public class Plotter extends GLJPanel {
 
     private void placeDot(int x, int y, Color c) {
         //grid.setPoint(x, y, c);
-        repaint();
+        //repaint();
     }
 
-    private BufferedImage drawFormula(String formula) {
-        BufferedImage image = (BufferedImage) new TeXFormula(formula).createBufferedImage(TeXConstants.STYLE_DISPLAY, (Math.max((int) (15 * zoom), 15)), Color.black, Color.decode("#ffffff"));
+    private BufferedImage drawFormula(String formula, int size) {
+        BufferedImage image = (BufferedImage) new TeXFormula(formula).createBufferedImage(TeXConstants.STYLE_DISPLAY, (Math.max((int) (size * zoom), size)), Color.black, Color.decode("#ffffff"));
         BufferedImage opaque = ImageHelpers.makeColorTransparent(image, Color.decode("#ffffff"));
 
         return opaque;
@@ -430,7 +435,6 @@ public class Plotter extends GLJPanel {
                 g2d.setStroke(new BasicStroke(4.0f));
                 g2d.drawLine(0, size, size, size);
                 g2d.setStroke(new BasicStroke(1.0f));
-                g2d.fillOval(0, size, 5, 5);
                 break;
             case LEFT:
                 g2d.setStroke(new BasicStroke(3.0f));

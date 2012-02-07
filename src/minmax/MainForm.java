@@ -26,16 +26,17 @@ public class MainForm extends javax.swing.JFrame {
         Config b = new Config(3, 4);
         Config c = new Config(8, 6);
         Config d = new Config(10, 11);
-        Config e = new Config(0, 0);
+        Config e = b.star();
         Config f = new Config(14, 0);
 
         Config g = new Config();
         long start = System.currentTimeMillis();
-        for(int i=0; i< 30; ++i){
-          g = a.star().times(b.star().times(c.star()));
+        for(int i=0; i< 1; ++i){
+          g = a.star().times(b.star()).times(c.star());
         }
         long end = System.currentTimeMillis();
-        System.out.println((end-start)/30.0);
+        System.out.println((end-start) / 1.0);
+        System.out.println(g.getVertexCount());
 
         surface.addLayer(g, Color.red);
         

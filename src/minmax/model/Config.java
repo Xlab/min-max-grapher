@@ -1,6 +1,7 @@
 package minmax.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -13,6 +14,7 @@ import minmax.Settings;
 public class Config {
 
     private final ZUinfPoint[] vertex;
+    private boolean star;
 
     public Config(float k, float t) {
         vertex = new ZUinfPoint[]{new ZUinfPoint(k, t)};
@@ -21,7 +23,7 @@ public class Config {
     private Config(ArrayList<ZUinfPoint> list) {
         vertex = list.toArray(new ZUinfPoint[]{});
     }
-    
+
     private Config(ZUinfPoint[] set) {
         vertex = set;
     }
@@ -125,20 +127,7 @@ public class Config {
                 }
             }
 
-            Collections.sort(set, new Comparator<ZUinfPoint>() {
-
-                @Override
-                public int compare(ZUinfPoint o1, ZUinfPoint o2) {
-                    //return (int) Math.signum(o2.getX() - o1.getX());
-                    if (o2.getX() < o1.getX()) {
-                        return -1;
-                    } else if (o2.getX() > o1.getX()) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-            });
+            Collections.sort(set);
             return new Config(set);
         } else {
             Config c = this;
@@ -171,21 +160,36 @@ public class Config {
     }
 
     public Config power(int power) {
-        Config c = new Config();
-        ZUinfPoint tmp = this.getVertex(0); 
-        for (int i = 0; i< this.getVertexCount(); tmp = this.getVertex(i), ++i) {
-            c = c.plus(new Config(tmp.getX() * power, tmp.getY() * power));
+        return new Config(this.powerSet(power));
+    }
+
+    public ZUinfPoint[] powerSet(int power) {
+        ZUinfPoint[] set = new ZUinfPoint[this.getVertexCount()];
+
+        ZUinfPoint tmp = this.getVertex(0);
+        for (int i = 0; i < this.getVertexCount(); tmp = this.getVertex(i), ++i) {
+            set[i] = (new ZUinfPoint(tmp.getX() * power, tmp.getY() * power));
         }
 
-        return c;
+        return set;
     }
 
     public Config star() {
-        Config e = new Config(0, 0);
-        for (int i = 1; i < Settings.defaultPrecision; ++i) {
-            e = e.plus(this.power(i));
+        if (this.isStar()) {
+            return this;
         }
 
+        ZUinfPoint[] set = new ZUinfPoint[this.getVertexCount() * Settings.defaultPrecision];
+        for (int i = 0, k= 0; i < Settings.defaultPrecision; ++i) {
+            final ZUinfPoint[] subset = this.powerSet(i);
+            for(int j = 0; j < subset.length; ++j)
+            {
+                set[k++] = subset[j];
+            }
+        }
+        
+        Config e = new Config(set);
+        e.setStar(true);
         return e;
     }
 
@@ -198,5 +202,13 @@ public class Config {
         }
 
         return new Config(set);
+    }
+
+    public boolean isStar() {
+        return star;
+    }
+
+    public void setStar(boolean star) {
+        this.star = star;
     }
 }

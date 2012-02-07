@@ -150,12 +150,16 @@ public class Config {
     }
 
     public Config times(Config b) {
-        ArrayList<ZUinfPoint> set = new ArrayList();
-        for (ZUinfPoint my : this.getVertex()) {
-            for (ZUinfPoint taken : b.getVertex()) {
-                set.add(new ZUinfPoint(my.getX() + taken.getX(), my.getY() + taken.getY()));
+        ZUinfPoint[] set = new ZUinfPoint[this.getVertexCount() * b.getVertexCount()];
+        for (int i = 0, k = 0; i < this.getVertexCount(); ++i) {
+            ZUinfPoint my = this.getVertex(i);
+            for (int j = 0; j < b.getVertexCount(); ++j) {
+                ZUinfPoint taken = b.getVertex(j);
+
+                set[k++] = new ZUinfPoint(my.getX() + taken.getX(), my.getY() + taken.getY());
             }
         }
+
         return new Config(set).plus(new Config());
     }
 
@@ -166,8 +170,9 @@ public class Config {
     public ZUinfPoint[] powerSet(int power) {
         ZUinfPoint[] set = new ZUinfPoint[this.getVertexCount()];
 
-        ZUinfPoint tmp = this.getVertex(0);
-        for (int i = 0; i < this.getVertexCount(); tmp = this.getVertex(i), ++i) {
+        ZUinfPoint tmp;
+        for (int i = 0; i < this.getVertexCount(); ++i) {
+            tmp = this.getVertex(i);
             set[i] = (new ZUinfPoint(tmp.getX() * power, tmp.getY() * power));
         }
 
@@ -180,14 +185,14 @@ public class Config {
         }
 
         ZUinfPoint[] set = new ZUinfPoint[this.getVertexCount() * Settings.defaultPrecision];
-        for (int i = 0, k= 0; i < Settings.defaultPrecision; ++i) {
+        for (int i = 0, k = 0; i < Settings.defaultPrecision; ++i) {
             final ZUinfPoint[] subset = this.powerSet(i);
-            for(int j = 0; j < subset.length; ++j)
-            {
+            for (int j = 0; j < subset.length; ++j) {
                 set[k++] = subset[j];
             }
         }
-        
+
+        Arrays.sort(set);
         Config e = new Config(set);
         e.setStar(true);
         return e;

@@ -22,22 +22,33 @@ public class MainForm extends javax.swing.JFrame {
 
         Surface surface = new Surface();
 
-        Config a = new Config(2, 1);
-        Config b = new Config(3, 4);
+        Config a = new Config(1, 2);
+        Config b = new Config(4, 3);
         Config c = new Config(8, 6);
         Config d = new Config(10, 11);
         Config e = b.star();
         Config f = new Config(14, 0);
 
+//        Config g = a.plus(b).plus(c).plus(d).plus(f);
+//        surface.addLayer(a, Color.orange, false);
+//        surface.addLayer(b, Color.green, false);
+//        surface.addLayer(c, Color.blue, false);
+//        surface.addLayer(d, Color.cyan, false);
+//        surface.addLayer(f, Color.black, false);
+        
+//  Config t = a.plus(b);
         Config g = new Config();
         long start = System.currentTimeMillis();
-        for(int i=0; i< 1; ++i){
+        for(int i=0; i< 100; ++i){
           g = a.star().times(b.star()).times(c.star());
         }
         long end = System.currentTimeMillis();
-        System.out.println((end-start) / 1.0);
-        System.out.println(g.getVertexCount());
+        System.out.println((end-start) / 100.0);
+//        System.out.println(g.getVertexCount());
 
+        //surface.addLayer(a.star(), Color.green, false);
+        //surface.addLayer(b.star(), Color.blue, false);
+        
         surface.addLayer(g, Color.red);
         
         //surface.addLayer(new Config(0, -4).plus(new Config(5, -4)).plus(new Config(3, -2)).plus(new Config(8, -2)), Color.green);

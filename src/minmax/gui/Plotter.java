@@ -356,13 +356,25 @@ public class Plotter extends GLJPanel {
                         final int y2 = (row + 1) * cellSize + kY - cellSize;
 
                         if (piece.getType() != Piece.Type.REGULAR) {
-                            g2.drawImage(drawPiece(piece), null, column * cellSize + kX, row * cellSize + kY + 1);
+                            if ((piece.getType() == Piece.Type.BOTTOM || piece.getType() == Piece.Type.VERTEX)
+                                    && surface.getPiece(layer, x + 1, y + 1).getType() == Piece.Type.REGULAR) {
+                                g2.drawImage(drawPiece(new Piece(piece.getLocation().getX(), piece.getLocation().getY(),
+                                        Piece.Type.LEFT, piece.getColor())), null, column * cellSize + kX, row * cellSize + kY + 1);
 
-                            if (piece.getType() == Piece.Type.VERTEX) {
-                                final int R = 2;
-                                g2.fillOval(x1 - R, y1 - R, R * 2 + 1, R * 2 + 1);
+                            }else if(surface.getPiece(layer, x - 1, y + 1) != null && (piece.getType() == Piece.Type.VERTEX)
+                                    && surface.getPiece(layer, x - 1, y + 1).getType() == Piece.Type.VERTEX)
+                            {
+                                g2.drawImage(drawPiece(new Piece(piece.getLocation().getX(), piece.getLocation().getY(),
+                                        Piece.Type.BOTTOM, piece.getColor())), null, column * cellSize + kX, row * cellSize + kY + 1);
                             }
-                        } else if(surface.needShadow(layer)){
+                            else {
+                                g2.drawImage(drawPiece(piece), null, column * cellSize + kX, row * cellSize + kY + 1);
+                                if (piece.getType() == Piece.Type.VERTEX) {
+                                    final int R = 2;
+                                    g2.fillOval(x1 - R, y1 - R, R * 2 + 1, R * 2 + 1);
+                                }
+                            }
+                        } else if (surface.needShadow(layer)) {
                             g2.setComposite(ImageHelpers.makeComposite(0.3f));
                             switch (layer % 2) {
                                 case 0:

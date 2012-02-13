@@ -261,11 +261,9 @@ public class Plotter extends GLJPanel {
                 row = (shifted_h ? 0 : 2);
                 for (int j = lowY; j <= hiY; ++j) {
                     if (j + (shifted_h ? 0 : 2) != gridCenter.y) {
-                        //засечки
                         g2.drawLine(column * cellSize + kX - 2, row * cellSize + kY, column * cellSize + kX + 2, row * cellSize + kY);
 
                         if (zoom >= 0.8) {
-                            //цифры
                             final int fMin = Math.min((int) (axisFontSize * zoom), axisFontSize);
                             g2.setFont(new Font("Arial", Font.PLAIN, fMin));
 
@@ -301,19 +299,14 @@ public class Plotter extends GLJPanel {
                     g2.drawImage(drawFormula(getXLabel(), 15), p.x, p.y, this);
                 }
 
-
-                //ось
                 g2.drawLine(0, row * cellSize + kY, w - (shifted_w ? 0 : Math.max((int) (6 * zoom), 4)), row * cellSize + kY);
 
-                //засечки & цифры
                 column = 0;
                 for (int j = lowX; j <= hiX; ++j) {
                     if (j != gridCenter.x) {
-                        //засечки
                         g2.drawLine(column * cellSize + kX, row * cellSize + kY - 2, column * cellSize + kX, row * cellSize + kY + 2);
 
                         if (zoom >= 0.8) {
-                            //цифры
                             final int fMin = Math.min((int) (axisFontSize * zoom), axisFontSize);
                             g2.setFont(new Font("Arial", Font.PLAIN, fMin));
                             g2.drawString("" + (j - gridCenter.x), column * cellSize + kX
@@ -323,7 +316,6 @@ public class Plotter extends GLJPanel {
                     ++column;
                 }
 
-                //стрелочка & переменная
                 if (!shifted_w) {
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                             RenderingHints.VALUE_ANTIALIAS_ON);

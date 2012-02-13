@@ -5,6 +5,9 @@
 package minmax;
 
 import java.awt.Color;
+import java.awt.Font;
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
 import minmax.model.Config;
 import minmax.model.Surface;
 
@@ -18,6 +21,8 @@ public class MainForm extends javax.swing.JFrame {
      * Creates new form MainForm
      */
     public MainForm() {
+
+        
         initComponents();
 
         Surface surface = new Surface();
@@ -30,11 +35,11 @@ public class MainForm extends javax.swing.JFrame {
         Config f = new Config(14, 0);
 
         Config g = a.plus(b).plus(c).plus(d).plus(f);
-        surface.addLayer(a, Color.orange, false);
-        surface.addLayer(b, Color.green, false);
-        surface.addLayer(c, Color.blue, false);
-        surface.addLayer(d, Color.cyan, false);
-        surface.addLayer(f, Color.black, false);
+//        surface.addLayer(a, Color.orange, false);
+//        surface.addLayer(b, Color.green, false);
+//        surface.addLayer(c, Color.blue, false);
+//        surface.addLayer(d, Color.cyan, false);
+//        surface.addLayer(f, Color.black, false);
         surface.addLayer(g, Color.red);
         
 //  Config t = a.plus(b);
@@ -78,6 +83,15 @@ public class MainForm extends javax.swing.JFrame {
         plotter1.setSurface(surface);
         plotter1.setXLabel("\\delta");
         plotter1.setYLabel("t");
+        
+        jsyntaxpane.DefaultSyntaxKit.initKit();
+        final JEditorPane jp = new JEditorPane();
+        JScrollPane js = new JScrollPane(jp);
+        jp.setContentType("text/java");
+        jp.setFont(new Font("Monaco", Font.PLAIN, 12));
+
+        js.doLayout();
+        jSplitPane2.setTopComponent(js);
     }
 
     /**
@@ -89,9 +103,17 @@ public class MainForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jButton1 = new javax.swing.JButton();
         plotter1 = new minmax.gui.Plotter();
+        jSplitPane2 = new javax.swing.JSplitPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+
+        jButton1.setText("jButton1");
+        jSplitPane1.setTopComponent(jButton1);
 
         plotter1.setXLabel("\\gamma");
         plotter1.setYLabel("\\delta");
@@ -100,28 +122,25 @@ public class MainForm extends javax.swing.JFrame {
         plotter1.setLayout(plotter1Layout);
         plotter1Layout.setHorizontalGroup(
             plotter1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 388, Short.MAX_VALUE)
+            .add(0, 454, Short.MAX_VALUE)
         );
         plotter1Layout.setVerticalGroup(
             plotter1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 288, Short.MAX_VALUE)
+            .add(0, 246, Short.MAX_VALUE)
         );
+
+        jSplitPane1.setTopComponent(plotter1);
+        jSplitPane1.setRightComponent(jSplitPane2);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(5, 5, 5)
-                .add(plotter1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(5, 5, 5))
+            .add(jSplitPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(5, 5, 5)
-                .add(plotter1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(5, 5, 5))
+            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
         );
 
         pack();
@@ -170,6 +189,9 @@ public class MainForm extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSplitPane jSplitPane2;
     private minmax.gui.Plotter plotter1;
     // End of variables declaration//GEN-END:variables
 }

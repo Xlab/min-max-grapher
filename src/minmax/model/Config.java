@@ -109,11 +109,13 @@ public class Config {
 
             for (ZUinfPoint my : this.getVertex()) {
                 if (taken != null) {
+                    dropUseless(set, taken);
                     set.add(taken);
                     if (!(taken.getX() < my.getX() && taken.getY() > my.getY())) {
                         my = markUseless(set, my);
 
                         if (my != null) {
+                            dropUseless(set, my);
                             set.add(my);
                         }
                     }
@@ -122,6 +124,7 @@ public class Config {
                     my = markUseless(set, my);
 
                     if (my != null) {
+                        dropUseless(set, my);
                         set.add(my);
                     }
                 }
@@ -149,6 +152,14 @@ public class Config {
         return my;
     }
 
+    private void dropUseless(ArrayList<ZUinfPoint> set, ZUinfPoint my) {
+        for (ZUinfPoint p : set) {
+            if (p.getX() >= my.getX() && p.getY() <= my.getY()) {
+                set.remove(p);
+            }
+        }
+    }
+
     public Config times(Config b) {
         ZUinfPoint[] set = new ZUinfPoint[this.getVertexCount() * b.getVertexCount()];
         for (int i = 0, k = 0; i < this.getVertexCount(); ++i) {
@@ -163,11 +174,11 @@ public class Config {
         return new Config(set).plus(new Config());
     }
 
-    public Config power(int power) {
+    public Config power(float power) {
         return new Config(this.powerSet(power));
     }
 
-    public ZUinfPoint[] powerSet(int power) {
+    public ZUinfPoint[] powerSet(float power) {
         ZUinfPoint[] set = new ZUinfPoint[this.getVertexCount()];
 
         ZUinfPoint tmp;
@@ -198,6 +209,26 @@ public class Config {
         return e;
     }
 
+    public Config sum(int times) {
+        if (times >= Settings.defaultPrecision) {
+            return this.star();
+        } else if (this.isStar()) {
+            return this;
+        }
+
+        ++times;
+        ZUinfPoint[] set = new ZUinfPoint[this.getVertexCount() * times];
+        for (int i = 0, k = 0; i < times; ++i) {
+            final ZUinfPoint[] subset = this.powerSet(i);
+            for (int j = 0; j < subset.length; ++j) {
+                set[k++] = subset[j];
+            }
+        }
+
+        Arrays.sort(set);
+        return new Config(set);
+    }
+
     @Override
     protected Object clone() {
         ZUinfPoint[] set = new ZUinfPoint[this.getVertexCount()];
@@ -216,4 +247,38 @@ public class Config {
     public void setStar(boolean star) {
         this.star = star;
     }
+
+    //Groovy linkage begin
+    public Config getAt(float power) {
+        return this.power(power);
+    }
+
+    public Config getAt(Config b) {
+        return this.times(b);
+    }
+
+    public Config call() {
+        return this.star();
+    }
+
+    public Config call(int times) {
+        return this.sum(times);
+    }
+
+    public Config multiply(Config b) {
+        return this.times(b);
+    }
+
+    public Config positive() {
+        return this;
+    }
+
+    public Config multiply(Float[] f) {
+        if (f.length > 1) {
+            return this.times(new Config(f[0], f[1]));
+        } else {
+            return this;
+        }
+    }
+    //Groovy linkage end
 }

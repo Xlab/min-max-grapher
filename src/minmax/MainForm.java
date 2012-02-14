@@ -5,9 +5,17 @@
 package minmax;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.KeyEvent;
+import java.util.regex.Pattern;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import javax.swing.text.Highlighter;
+import jsyntaxpane.DefaultSyntaxKit;
+import jsyntaxpane.components.Markers;
+import math.Calculator;
+import minmax.gui.Plotter;
 import minmax.model.Config;
 import minmax.model.Surface;
 
@@ -22,46 +30,54 @@ public class MainForm extends javax.swing.JFrame {
      */
     public MainForm() {
 
-        
         initComponents();
 
-        Surface surface = new Surface();
+        DefaultSyntaxKit.initKit();
+        mathEditor.setContentType("text/groovy");
+        mathEditor.setFont(new Font("Monaco", Font.PLAIN, 13));
+        //mathEditor.setMinimumSize(new Dimension(100, 100));
+        //mathEditor.setPreferredSize(new Dimension(100, 100));
+        //mathEditor.set
 
-        Config a = new Config(0, 0);
+
+        surface = new Surface();
+
+        Config a = new Config(1, 2);
         Config b = new Config(4, 3);
         Config c = new Config(8, 6);
         Config d = new Config(10, 11);
         Config e = b.star();
         Config f = new Config(14, 0);
 
-        Config g = a.plus(b).plus(c).plus(d).plus(f);
+        //Config g = a.plus(b).plus(c).plus(d).plus(f);
+
 //        surface.addLayer(a, Color.orange, false);
 //        surface.addLayer(b, Color.green, false);
 //        surface.addLayer(c, Color.blue, false);
 //        surface.addLayer(d, Color.cyan, false);
 //        surface.addLayer(f, Color.black, false);
-        surface.addLayer(g, Color.red);
-        
+
+
 //  Config t = a.plus(b);
-//        Config g = new Config();
-//        long start = System.currentTimeMillis();
-//        for (int i = 0; i < 100000000; ++i) {
-//            g = a.plus(b);
-//        }
-//        long end = System.currentTimeMillis();
-//        System.out.println(100000000.0 / (end - start));
-//        System.out.println(g.getVertexCount());
+        Config g = new Config();
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 1; ++i) {
+            g = (a.plus(b)).sum(6);
+        }
+        long end = System.currentTimeMillis();
+        System.out.println(1.0 / (end - start));
+        System.out.println(g.getVertexCount());
 
         //surface.addLayer(a.star(), Color.green, false);
         //surface.addLayer(b.star(), Color.blue, false);
 
-       // surface.addLayer(g, Color.red);
+         surface.addLayer(g, Color.red);
 
         //surface.addLayer(new Config(0, -4).plus(new Config(5, -4)).plus(new Config(3, -2)).plus(new Config(8, -2)), Color.green);
         //ystem.out.println((a.plus(b)).star().plus(c));
         //surface.addLayer(a.plus(b).plus(c).plus(d), Color.blue);
         //surface.addLayer(a.plus(b).plus(c).plus(d), Color.green);
-        
+
 //        Config lol = new Config(0, 0);
 //        for(int i = 1; i< 200; i += 1)
 //        {
@@ -77,21 +93,12 @@ public class MainForm extends javax.swing.JFrame {
 //            blue = blue.plus(new Config(i, i));
 //            
 //        }
-        
+
 //        surface.addLayer(blue, Color.blue, false);
 
-        plotter1.setSurface(surface);
-        plotter1.setXLabel("\\delta");
-        plotter1.setYLabel("t");
-        
-        jsyntaxpane.DefaultSyntaxKit.initKit();
-        final JEditorPane jp = new JEditorPane();
-        JScrollPane js = new JScrollPane(jp);
-        jp.setContentType("text/java");
-        jp.setFont(new Font("Monaco", Font.PLAIN, 12));
-
-        js.doLayout();
-        jSplitPane2.setTopComponent(js);
+        mainPlotter.setSurface(surface);
+        mainPlotter.setXLabel("\\delta");
+        mainPlotter.setYLabel("t");
     }
 
     /**
@@ -104,32 +111,70 @@ public class MainForm extends javax.swing.JFrame {
     private void initComponents() {
 
         jSplitPane1 = new javax.swing.JSplitPane();
-        jButton1 = new javax.swing.JButton();
-        plotter1 = new minmax.gui.Plotter();
+        mainPlotter = new minmax.gui.Plotter();
         jSplitPane2 = new javax.swing.JSplitPane();
+        editorScroll = new javax.swing.JScrollPane();
+        mathEditor = new javax.swing.JEditorPane();
+        formulaeScroll = new javax.swing.JScrollPane();
+        formulaeView = new minmax.gui.formulaeDisplay();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane1.setResizeWeight(0.5);
 
-        jButton1.setText("jButton1");
-        jSplitPane1.setTopComponent(jButton1);
+        mainPlotter.setXLabel("\\gamma");
+        mainPlotter.setYLabel("\\delta");
+        mainPlotter.setMinimumSize(new java.awt.Dimension(454, 246));
 
-        plotter1.setXLabel("\\gamma");
-        plotter1.setYLabel("\\delta");
-
-        org.jdesktop.layout.GroupLayout plotter1Layout = new org.jdesktop.layout.GroupLayout(plotter1);
-        plotter1.setLayout(plotter1Layout);
-        plotter1Layout.setHorizontalGroup(
-            plotter1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 454, Short.MAX_VALUE)
+        org.jdesktop.layout.GroupLayout mainPlotterLayout = new org.jdesktop.layout.GroupLayout(mainPlotter);
+        mainPlotter.setLayout(mainPlotterLayout);
+        mainPlotterLayout.setHorizontalGroup(
+            mainPlotterLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 646, Short.MAX_VALUE)
         );
-        plotter1Layout.setVerticalGroup(
-            plotter1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 246, Short.MAX_VALUE)
+        mainPlotterLayout.setVerticalGroup(
+            mainPlotterLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 354, Short.MAX_VALUE)
         );
 
-        jSplitPane1.setTopComponent(plotter1);
+        jSplitPane1.setTopComponent(mainPlotter);
+
+        jSplitPane2.setResizeWeight(0.3);
+
+        mathEditor.setFont(new java.awt.Font("Monaco", 0, 12)); // NOI18N
+        mathEditor.setMinimumSize(new java.awt.Dimension(100, 100));
+        mathEditor.setPreferredSize(new java.awt.Dimension(100, 100));
+        mathEditor.setSize(new java.awt.Dimension(0, 0));
+        mathEditor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                MainForm.this.keyReleased(evt);
+            }
+        });
+        editorScroll.setViewportView(mathEditor);
+
+        jSplitPane2.setLeftComponent(editorScroll);
+
+        formulaeScroll.setAlignmentY(0.7F);
+
+        formulaeView.setBackground(new java.awt.Color(255, 255, 255));
+        formulaeView.setPreferredSize(new java.awt.Dimension(100, 100));
+
+        org.jdesktop.layout.GroupLayout formulaeViewLayout = new org.jdesktop.layout.GroupLayout(formulaeView);
+        formulaeView.setLayout(formulaeViewLayout);
+        formulaeViewLayout.setHorizontalGroup(
+            formulaeViewLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 469, Short.MAX_VALUE)
+        );
+        formulaeViewLayout.setVerticalGroup(
+            formulaeViewLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 222, Short.MAX_VALUE)
+        );
+
+        formulaeScroll.setViewportView(formulaeView);
+
+        jSplitPane2.setRightComponent(formulaeScroll);
+
         jSplitPane1.setRightComponent(jSplitPane2);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
@@ -140,11 +185,33 @@ public class MainForm extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE)
+            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void keyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_keyReleased
+        if (!evt.isActionKey()) {
+            surface.clear();
+            formulaeView.clearCache();
+            String error = null;
+            for (String s : mathEditor.getText().split("\r\n|\r|\n")) {
+                formulaeView.add(s);
+                try {
+                    final Config g = new Calculator().calc(s);
+                    if (g != null) {
+                        surface.addLayer(g, Color.red);
+                        mainPlotter.updateUI();
+                    }
+                } catch (Exception e) {
+                    //System.err.println("Groovy problem: " + e);
+                    //smth here
+                }
+            }
+            formulaeView.render();
+        }
+    }//GEN-LAST:event_keyReleased
 
     /**
      * @param args the command line arguments
@@ -189,9 +256,13 @@ public class MainForm extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JScrollPane editorScroll;
+    private javax.swing.JScrollPane formulaeScroll;
+    private minmax.gui.formulaeDisplay formulaeView;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
-    private minmax.gui.Plotter plotter1;
+    private minmax.gui.Plotter mainPlotter;
+    private javax.swing.JEditorPane mathEditor;
     // End of variables declaration//GEN-END:variables
+    final Surface surface;
 }

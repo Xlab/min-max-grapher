@@ -46,7 +46,13 @@ public class ZUinfPoint implements Comparable {
         } else if (((ZUinfPoint) o).getX() > this.getX()) {
             return 1;
         } else {
-            return 0;
+            if (((ZUinfPoint) o).getY() < this.getY()) {
+                return -1;
+            } else if (((ZUinfPoint) o).getY() > this.getY()) {
+                return 1;
+            } else {
+                return 0;
+            }
         }
     }
 
@@ -76,33 +82,25 @@ public class ZUinfPoint implements Comparable {
         return hash;
     }
 
-    
-    
     public String toTeXString() {
         if (this.equals(new ZUinfPoint())) {
             return "\\epsilon";
-        }else if(this.equals(new ZUinfPoint(0, 0)))
-        {
+        } else if (this.equals(new ZUinfPoint(0, 0))) {
             return "e";
         }
-        
+
         final String event = "\\delta";
         final String time = "t";
-        
-        final String eventView = ((this.x == Float.POSITIVE_INFINITY) ? "\\inf" : ((this.x == Float.NEGATIVE_INFINITY) ? "-\\inf" : ""+(int)this.x));
-        final String timeView = ((this.y == Float.POSITIVE_INFINITY) ? "\\inf" : ((this.y == Float.NEGATIVE_INFINITY) ? "-\\inf" : ""+(int)this.y));;
-        
-        if(this.x == 0.0f)
-        {
-            return time+"^{" + timeView + "}";
-        }
-        else if(this.y == 0.0f)
-        {
-            return event+"^{" + eventView + "}";
-        }
-        else
-        {
-            return event+"^{" + eventView + "}" + time+"^{" + timeView + "}";
+
+        final String eventView = ((this.x == Float.POSITIVE_INFINITY) ? "\\inf" : ((this.x == Float.NEGATIVE_INFINITY) ? "-\\inf" : "" + (int) this.x));
+        final String timeView = ((this.y == Float.POSITIVE_INFINITY) ? "\\inf" : ((this.y == Float.NEGATIVE_INFINITY) ? "-\\inf" : "" + (int) this.y));;
+
+        if (this.x == 0.0f) {
+            return time + "^{" + timeView + "}";
+        } else if (this.y == 0.0f) {
+            return event + "^{" + eventView + "}";
+        } else {
+            return event + "^{" + eventView + "}" + time + "^{" + timeView + "}";
         }
     }
 }

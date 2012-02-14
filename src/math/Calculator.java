@@ -1,8 +1,11 @@
 package math;
 
-import javax.script.Compilable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import groovy.util.GroovyScriptEngine;
+import java.util.HashMap;
+import javax.script.*;
+import minmax.model.Config;
 
 /**
  *
@@ -10,6 +13,19 @@ import javax.script.ScriptEngineManager;
  */
 public class Calculator {
 
-    ScriptEngine e = new ScriptEngineManager().getEngineByExtension("js");
-    Compilable jsComplier = (Compilable) e;
+    /**
+     * @param args
+     */
+    public Config calc(String input) {
+        Binding binding = new Binding();
+        binding.setVariable("a", new Config(1, 2));
+        binding.setVariable("b", new Config(4, 3));
+        binding.setProperty("c", new Config(8, 6));
+        binding.setVariable("inf", Float.POSITIVE_INFINITY);
+        GroovyShell shell = new GroovyShell(binding);
+
+        Config result = (Config) shell.evaluate(input);
+
+        return result;
+    }
 }

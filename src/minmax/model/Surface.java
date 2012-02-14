@@ -38,23 +38,23 @@ public class Surface {
     public void addLayer(Config config, Color color) {
         layers.add(new Layer(config, color));
     }
-    
+
     public void addLayer(Config config, Color color, boolean shadow) {
         layers.add(new Layer(config, color, shadow));
     }
 
     public Piece getPiece(int layer, int i, int j) {
-        Config config = getLayer(layer).getConfig();
+        Config config = getLayer(layer).getConfig();     
         Color color = getLayer(layer).getColor();
         final float event = i - dimension / 2;
         final float time = (dimension - j) - dimension / 2;
-        
+
         for (ZUinfPoint slope : config.getVertex()) {
             if (event > slope.getX() && time < slope.getY()) {
                 return new Piece(event, time, Piece.Type.REGULAR, color);
             }
         }
-        
+
         for (ZUinfPoint slope : config.getVertex()) {
             if (slope.getX() == event && slope.getY() == time) {
                 return new Piece(event, time, Piece.Type.VERTEX, color);
@@ -67,9 +67,12 @@ public class Surface {
 
         return null;
     }
-    
-    public boolean needShadow(int layer)
-    {
+
+    public boolean needShadow(int layer) {
         return getLayer(layer).needShadow();
+    }
+
+    public void clear() {
+        layers.clear();
     }
 }

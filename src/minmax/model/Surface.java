@@ -32,7 +32,11 @@ public class Surface {
     }
 
     private Layer getLayer(int n) {
-        return layers.get(n);
+        try {
+            return layers.get(n);
+        } catch (IndexOutOfBoundsException e) {
+            return new Layer(new Config(), Color.black);
+        }
     }
 
     public void addLayer(Config config, Color color) {

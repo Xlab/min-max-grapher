@@ -2,7 +2,6 @@ package minmax.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import minmax.Settings;
@@ -299,6 +298,28 @@ public class Config {
         this.star = star;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Config other = (Config) obj;
+        if (!Arrays.deepEquals(this.vertex, other.vertex)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + Arrays.deepHashCode(this.vertex);
+        return hash;
+    }
+
     //Groovy linkage begin
     public Config getAt(float power) {
         return this.power(power);
@@ -315,8 +336,7 @@ public class Config {
     public Config call(Float times) {
         if (times.equals(Float.POSITIVE_INFINITY)) {
             return this.star();
-        }else
-        {
+        } else {
             return this;
         }
     }

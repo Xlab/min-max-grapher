@@ -371,7 +371,7 @@ public class Plotter extends GLJPanel {
                                     }
                                 }
                             }
-                        } else if (surface.needShadow(layer)) {
+                        } else if (surface.needShadow(layer) && Settings.viewShadow) {
                             g2.setComposite(ImageHelpers.makeComposite(0.2f));
                             switch (layer % 2) {
                                 case 0:

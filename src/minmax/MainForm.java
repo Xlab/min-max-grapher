@@ -7,8 +7,10 @@ package minmax;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.regex.Pattern;
+import javax.swing.AbstractAction;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import javax.swing.text.Highlighter;
@@ -17,6 +19,7 @@ import jsyntaxpane.components.Markers;
 import math.Calculator;
 import minmax.gui.Plotter;
 import minmax.model.Config;
+import minmax.model.Layer;
 import minmax.model.Surface;
 
 /**
@@ -57,21 +60,21 @@ public class MainForm extends javax.swing.JFrame {
 //        surface.addLayer(d, Color.cyan, false);
 //        surface.addLayer(f, Color.black, false);
 
-
-//  Config t = a.plus(b);
-        Config g = new Config();
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < 1; ++i) {
-            g = (a.plus(b)).sum(6);
-        }
-        long end = System.currentTimeMillis();
-        System.out.println(1.0 / (end - start));
-        System.out.println(g.getVertexCount());
-
-        //surface.addLayer(a.star(), Color.green, false);
-        //surface.addLayer(b.star(), Color.blue, false);
-
-         surface.addLayer(g, Color.red);
+//
+//        Config t = a.plus(b);
+//        Config g = new Config();
+//        long start = System.currentTimeMillis();
+//        for (int i = 0; i < 1; ++i) {
+//            g = a.star().times(b.star()).times(c.star());
+//        }
+//        long end = System.currentTimeMillis();
+//        System.out.println((end - start));
+//        System.out.println(g.getVertexCount());
+//
+//        //surface.addLayer(a.star(), Color.green, false);
+//        //surface.addLayer(b.star(), Color.blue, false);
+//
+//        surface.addLayer(g, Color.red);
 
         //surface.addLayer(new Config(0, -4).plus(new Config(5, -4)).plus(new Config(3, -2)).plus(new Config(8, -2)), Color.green);
         //ystem.out.println((a.plus(b)).star().plus(c));
@@ -97,8 +100,8 @@ public class MainForm extends javax.swing.JFrame {
 //        surface.addLayer(blue, Color.blue, false);
 
         mainPlotter.setSurface(surface);
-        mainPlotter.setXLabel("\\delta");
-        mainPlotter.setYLabel("t");
+        mainPlotter.setXLabel("\\gamma");
+        mainPlotter.setYLabel("\\delta");
     }
 
     /**
@@ -110,18 +113,25 @@ public class MainForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jSplitPane1 = new javax.swing.JSplitPane();
+        mainSplit = new javax.swing.JSplitPane();
         mainPlotter = new minmax.gui.Plotter();
-        jSplitPane2 = new javax.swing.JSplitPane();
+        editorsSplit = new javax.swing.JSplitPane();
         editorScroll = new javax.swing.JScrollPane();
         mathEditor = new javax.swing.JEditorPane();
         formulaeScroll = new javax.swing.JScrollPane();
         formulaeView = new minmax.gui.formulaeDisplay();
+        menuBar = new javax.swing.JMenuBar();
+        menuMe = new javax.swing.JMenu();
+        menuExit = new javax.swing.JMenuItem();
+        menuView = new javax.swing.JMenu();
+        menuViewShadow = new javax.swing.JCheckBoxMenuItem();
+        menuViewAutoCompute = new javax.swing.JCheckBoxMenuItem();
+        menuCompute = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        jSplitPane1.setResizeWeight(0.5);
+        mainSplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        mainSplit.setResizeWeight(0.5);
 
         mainPlotter.setXLabel("\\gamma");
         mainPlotter.setYLabel("\\delta");
@@ -135,17 +145,16 @@ public class MainForm extends javax.swing.JFrame {
         );
         mainPlotterLayout.setVerticalGroup(
             mainPlotterLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 354, Short.MAX_VALUE)
+            .add(0, 442, Short.MAX_VALUE)
         );
 
-        jSplitPane1.setTopComponent(mainPlotter);
+        mainSplit.setTopComponent(mainPlotter);
 
-        jSplitPane2.setResizeWeight(0.3);
+        editorsSplit.setResizeWeight(0.3);
 
         mathEditor.setFont(new java.awt.Font("Monaco", 0, 12)); // NOI18N
         mathEditor.setMinimumSize(new java.awt.Dimension(100, 100));
         mathEditor.setPreferredSize(new java.awt.Dimension(100, 100));
-        mathEditor.setSize(new java.awt.Dimension(0, 0));
         mathEditor.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 MainForm.this.keyReleased(evt);
@@ -153,7 +162,7 @@ public class MainForm extends javax.swing.JFrame {
         });
         editorScroll.setViewportView(mathEditor);
 
-        jSplitPane2.setLeftComponent(editorScroll);
+        editorsSplit.setLeftComponent(editorScroll);
 
         formulaeScroll.setAlignmentY(0.7F);
 
@@ -164,28 +173,55 @@ public class MainForm extends javax.swing.JFrame {
         formulaeView.setLayout(formulaeViewLayout);
         formulaeViewLayout.setHorizontalGroup(
             formulaeViewLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 469, Short.MAX_VALUE)
+            .add(0, 398, Short.MAX_VALUE)
         );
         formulaeViewLayout.setVerticalGroup(
             formulaeViewLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 222, Short.MAX_VALUE)
+            .add(0, 112, Short.MAX_VALUE)
         );
 
         formulaeScroll.setViewportView(formulaeView);
 
-        jSplitPane2.setRightComponent(formulaeScroll);
+        editorsSplit.setRightComponent(formulaeScroll);
 
-        jSplitPane1.setRightComponent(jSplitPane2);
+        mainSplit.setRightComponent(editorsSplit);
+
+        menuMe.setText("MinMaxGrapher");
+        menuMe.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+
+        menuExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.META_MASK));
+        menuExit.setText("Выход");
+        menuMe.add(menuExit);
+
+        menuBar.add(menuMe);
+
+        menuView.setLabel("Вид");
+
+        menuViewShadow.setSelected(true);
+        menuViewShadow.setText("Отображать тень");
+        menuView.add(menuViewShadow);
+
+        menuViewAutoCompute.setSelected(true);
+        menuViewAutoCompute.setText("Автоматически вычислять");
+        menuView.add(menuViewAutoCompute);
+
+        menuBar.add(menuView);
+
+        menuCompute.setText("Вычислить");
+        menuCompute.setEnabled(false);
+        menuBar.add(menuCompute);
+
+        setJMenuBar(menuBar);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jSplitPane1)
+            .add(mainSplit)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jSplitPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
+            .add(mainSplit, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
         );
 
         pack();
@@ -193,25 +229,12 @@ public class MainForm extends javax.swing.JFrame {
 
     private void keyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_keyReleased
         if (!evt.isActionKey()) {
-            surface.clear();
-            formulaeView.clearCache();
-            String error = null;
-            for (String s : mathEditor.getText().split("\r\n|\r|\n")) {
-                formulaeView.add(s);
-                try {
-                    final Config g = new Calculator().calc(s);
-                    if (g != null) {
-                        surface.addLayer(g, Color.red);
-                        mainPlotter.updateUI();
-                    }
-                } catch (Exception e) {
-                    //System.err.println("Groovy problem: " + e);
-                    //smth here
-                }
+            createFormulae();
+            if (menuViewAutoCompute.getState()) {
+                compute();
             }
-            formulaeView.render();
         }
-    }//GEN-LAST:event_keyReleased
+   }//GEN-LAST:event_keyReleased
 
     /**
      * @param args the command line arguments
@@ -257,12 +280,79 @@ public class MainForm extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane editorScroll;
+    private javax.swing.JSplitPane editorsSplit;
     private javax.swing.JScrollPane formulaeScroll;
     private minmax.gui.formulaeDisplay formulaeView;
-    private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JSplitPane jSplitPane2;
     private minmax.gui.Plotter mainPlotter;
+    private javax.swing.JSplitPane mainSplit;
     private javax.swing.JEditorPane mathEditor;
+    private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenu menuCompute;
+    private javax.swing.JMenuItem menuExit;
+    private javax.swing.JMenu menuMe;
+    private javax.swing.JMenu menuView;
+    private javax.swing.JCheckBoxMenuItem menuViewAutoCompute;
+    private javax.swing.JCheckBoxMenuItem menuViewShadow;
     // End of variables declaration//GEN-END:variables
     final Surface surface;
+
+    class ComputeAction extends AbstractAction {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
+
+    private String adaptFormulae(String f) {
+        f = f.replaceAll("display\\s*\\(\\s*([^,]+)\\s*,\\s*([\\w+-]+)\\s*\\)", "\\\\text{Display } $1 \\\\text{ in } \\\\textbf{$2}"); // display -> none
+        f = f.replaceAll("display\\s*\\(.*\\)", ""); //display_ not match
+        f = f.replaceAll("dt\\s*\\(\\s*([\\w+-]+)\\s*,\\s*([\\w+-]+)\\s*\\)", "\\\\gamma^{$1}\\\\delta^{$2}"); // dt -> gamma-delta notation
+        f = f.replaceAll("dt\\s*\\(.*\\)", ""); //dt_ not match
+        f = f.replaceAll("\\s*\\+\\s*", " \\\\oplus "); // + -> oplus
+        f = f.replaceAll("([\\w+-]+)\\s*\\(\\s*([\\w+-]+)\\s*\\)", "\\\\bigoplus_{k=0}^{$2}$1^{k}"); // (k) -> k-sum
+        f = f.replaceAll("([\\w+-]+)\\s*\\(\\s*inf\\s*\\)", "$1^\\\\star"); // (inf) -> *
+        f = f.replaceAll("([\\w+-]+)\\s*\\(\\s*\\)", "$1^\\\\star"); // () -> *
+        f = f.replaceAll("\\[([\\w+-]+)\\]", "^{$1}");  // [54] -> ^{54}
+        f = f.replaceAll("\\s*\\[.*\\]", ""); //a[] -> a
+        f = f.replaceAll("dt\\W", ""); //dt -> none
+        f = f.replaceAll("def\\s+", ""); // dt -> none
+        f = f.replaceAll("([\\W]+|^)-inf([\\W]+|$)", "$1-\\\\infty$2"); // +inf -> 8
+        f = f.replaceAll("([\\W]+|^)inf([\\W]+|$)", "$1+\\\\infty$2"); // +inf -> 8
+        f = f.replaceAll("([\\W]+|^)zero([\\W]+|$)", "$1\\\\varepsilon$2"); // zero -> epsilon
+        f = f.replaceAll("([\\W]+|^)unit([\\W]+|$)", "$1e$2"); // unit -> e
+        f = f.replaceAll("/\\*(.*)$*", "\\\\text{$1}"); //hard comments bold
+        f = f.replaceAll("^*(.*)\\*/", "\\\\text{$1}"); //hard comments bold
+        //f = f.replaceAll("\\s*\\*\\s*", " \\\\otimes "); // * -> otimes
+        f = f.replaceAll("\\s*\\*\\s*", ""); // * -> otimes
+        f = f.replaceAll("\\s*//.*$", ""); // clean basic comments
+        return f;
+    }
+
+    private void createFormulae() {
+        formulaeView.setDocument("");
+        Calculator calc = new Calculator();
+        String s= mathEditor.getText();
+        if (calc.checkLine(s)) {
+            formulaeView.setDocument(adaptFormulae(s));
+        }
+        formulaeView.render();
+    }
+
+    private void compute() {
+        surface.clear();
+        Calculator calc = new Calculator();
+        if (calc.checkLine(mathEditor.getText())) {
+            try {
+                calc.eval(mathEditor.getText());
+                for (Layer l : calc.getReady()) {
+                    surface.addLayer(l);
+                }
+            } catch (Exception e) {
+                surface.clear();
+            }
+
+            mainPlotter.updateUI();
+        }
+    }
 }

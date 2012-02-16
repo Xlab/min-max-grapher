@@ -43,8 +43,12 @@ public class Surface {
         layers.add(new Layer(config, color, shadow));
     }
 
+    public void addLayer(Layer l) {
+        layers.add(l);
+    }
+
     public Piece getPiece(int layer, int i, int j) {
-        Config config = getLayer(layer).getConfig();     
+        Config config = getLayer(layer).getConfig();
         Color color = getLayer(layer).getColor();
         final float event = i - dimension / 2;
         final float time = (dimension - j) - dimension / 2;

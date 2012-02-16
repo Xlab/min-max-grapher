@@ -372,7 +372,7 @@ public class Plotter extends GLJPanel {
                                 }
                             }
                         } else if (surface.needShadow(layer)) {
-                            g2.setComposite(ImageHelpers.makeComposite(0.3f));
+                            g2.setComposite(ImageHelpers.makeComposite(0.2f));
                             switch (layer % 2) {
                                 case 0:
                                     g2.drawLine(x1, y2, x2, y1);

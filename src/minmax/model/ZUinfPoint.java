@@ -41,6 +41,7 @@ public class ZUinfPoint implements Comparable {
 
     @Override
     public int compareTo(Object o) {
+        if( o == null){return -1;}
         if (((ZUinfPoint) o).getX() < this.getX()) {
             return -1;
         } else if (((ZUinfPoint) o).getX() > this.getX()) {
@@ -89,8 +90,8 @@ public class ZUinfPoint implements Comparable {
             return "e";
         }
 
-        final String event = "\\delta";
-        final String time = "t";
+        final String event = "\\gamma";
+        final String time = "\\delta";
 
         final String eventView = ((this.x == Float.POSITIVE_INFINITY) ? "\\inf" : ((this.x == Float.NEGATIVE_INFINITY) ? "-\\inf" : "" + (int) this.x));
         final String timeView = ((this.y == Float.POSITIVE_INFINITY) ? "\\inf" : ((this.y == Float.NEGATIVE_INFINITY) ? "-\\inf" : "" + (int) this.y));;

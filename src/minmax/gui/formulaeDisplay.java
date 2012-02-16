@@ -20,7 +20,6 @@ public class formulaeDisplay extends javax.swing.JPanel {
      */
     public formulaeDisplay() {
         initComponents();
-        cache = new ArrayList<String>();
     }
 
     @SuppressWarnings("unchecked")
@@ -41,29 +40,20 @@ public class formulaeDisplay extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
     BufferedImage buffer;
-    ArrayList<String> cache;
+    String document;
 
-    public void clearCache() {
-        cache.clear();
-    }
-
-    public void add(String s) {
+    public void setDocument(String s) {
+        s = "\\begin{array}{l}" + s.replace("\n", "&\\\\") + "\\end{array}";
 
         try {
-            TeXFormula tmp = new TeXFormula("\\begin{array}{l}" + s + "&\\\\" + s + "\\end{array}");
-            cache.add(s);
+            TeXFormula tmp = new TeXFormula(s);
+            document = s;
         } catch (Exception e) {
-            //smth here
+            //ex here
         }
     }
 
     public void render() {
-
-        String document = "\\begin{array}{l}";
-        for (String s : cache) {
-            document += (s + "&\\\\");
-        }
-        document += "\\end{array}";
 
         TeXFormula formula = new TeXFormula(document);
         TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, 20);

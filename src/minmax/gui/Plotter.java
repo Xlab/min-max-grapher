@@ -178,7 +178,7 @@ public class Plotter extends GLJPanel {
         final Point p = new Point(0, 0);
         final int w = getSize().width;
         final int h = getSize().height;
-
+        
         GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().
                 getDefaultConfiguration();
         BufferedImage buffer = gc.createCompatibleImage(w, h);

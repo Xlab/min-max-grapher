@@ -4,6 +4,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Map;
 import minmax.model.Config;
 import minmax.model.Layer;
 import org.codehaus.groovy.control.CompilationFailedException;
@@ -14,10 +15,12 @@ import org.codehaus.groovy.control.CompilationFailedException;
  */
 public class Calculator {
 
-    final Binding binding;
-    final GroovyShell shell;
-    final ArrayList<Layer> ready;
+    private final Binding binding;
+    private final GroovyShell shell;
+    private final ArrayList<Layer> ready;
 
+    
+    
     public Calculator() {
         ready = new ArrayList<Layer>();
         binding = new Binding();
@@ -37,11 +40,12 @@ public class Calculator {
         shell = new GroovyShell(ClassLoader.getSystemClassLoader(), binding);
     }
 
-    public void eval(String input) {
+    public Map eval(String input) {
         Config result = (Config) shell.evaluate("minmax.model.Config dt(float event, float time){ return new minmax.model.Config(event, time); }; "
                 + "void display(minmax.model.Config var, java.awt.Color c){ __hiddenCalculator.display(var, c); }; "
                 + "void draft(minmax.model.Config var, java.awt.Color c){ __hiddenCalculator.draft(var, c); }; "
                 + input);
+        return binding.getVariables();
     }
 
     public boolean checkLine(String line) {
@@ -66,4 +70,13 @@ public class Calculator {
     public ArrayList<Layer> getReady() {
         return ready;
     }
+
+    public Binding getBinding() {
+        return binding;
+    }
+
+    public GroovyShell getShell() {
+        return shell;
+    }
 }
+

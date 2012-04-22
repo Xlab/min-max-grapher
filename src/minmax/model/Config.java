@@ -85,6 +85,19 @@ public class Config {
 
         return string;
     }
+    
+    public String toTeXString() {
+        String string = "";
+        
+        int i = 0;
+        for (ZUinfPoint point : this.getVertex()) {
+            ++i;
+            string += point.toTeXString() + ((this.getVertexCount() > 1 &&
+                    i < this.getVertexCount()) ? " \\oplus " : "");
+        }
+
+        return string;
+    }
 
     public Config plus(Config b) {
         if (this.getVertexCount() < 1) {
@@ -239,10 +252,12 @@ public class Config {
                         continue;
                     }
 
-                    if (set[s].getX() >= subset[j].getX() && set[s].getY() <= subset[j].getY()) {
-                        set[s] = null;
-                    } else if (subset[j].getX() >= set[s].getX() && subset[j].getY() <= set[s].getY()) {
-                        subset[j] = null;
+                    if (set[s] != null && subset[j] != null) {
+                        if (set[s].getX() >= subset[j].getX() && set[s].getY() <= subset[j].getY()) {
+                            set[s] = null;
+                        } else if (subset[j].getX() >= set[s].getX() && subset[j].getY() <= set[s].getY()) {
+                            subset[j] = null;
+                        }
                     }
                 }
 

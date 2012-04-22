@@ -4,11 +4,15 @@
  */
 package minmax;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.util.Map;
+import java.util.Map.Entry;
 import javax.swing.AbstractAction;
 import jsyntaxpane.DefaultSyntaxKit;
 import math.Calculator;
+import minmax.model.Config;
 import minmax.model.Layer;
 import minmax.model.Surface;
 
@@ -40,22 +44,33 @@ public class MainForm extends javax.swing.JFrame {
 //      surface.addLayer(c, Color.blue, false);
 //      surface.addLayer(d, Color.cyan, false);
 //      surface.addLayer(f, Color.black, false);
+
 //
 //
 //      Config t = a.plus(b);
-//      Config g = new Config();
-//      long start = System.currentTimeMillis();
-//      for (int i = 0; i < 1; ++i) {
-//          g = a.star().times(b.star()).times(c.star());
-//      }
-//      long end = System.currentTimeMillis();
-//      System.out.println((end - start));
-//      System.out.println(g.getVertexCount());
+//        Config zs = new Config();
+//        long start = System.currentTimeMillis();
+//        for (int i = 0; i < 1; ++i) {
+//            zs = new Config();
 //
+//            Config x = new Config(1, 2);
+//            Config y = new Config(2, 3);
+//            Config z1 = x.star().times(y);
+//            Config z2 = y.star().times(x);
+//            zs = (z1.plus(z2)).star();
+//
+//
+//
+//
+//        }
+//        long end = System.currentTimeMillis();
+//        System.out.println((end - start));
+//        System.out.println(zs.getVertexCount());
+
 //      //surface.addLayer(a.star(), Color.green, false);
 //      //surface.addLayer(b.star(), Color.blue, false);
 //
-//      surface.addLayer(g, Color.red);
+        //  surface.addLayer(zs, Color.red);
 //
 //      surface.addLayer(new Config(0, -4).plus(new Config(5, -4)).plus(new Config(3, -2)).plus(new Config(8, -2)), Color.green);
 //      ystem.out.println((a.plus(b)).star().plus(c));
@@ -227,7 +242,7 @@ public class MainForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void keyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_keyReleased
-        if (!evt.isActionKey()) {
+        if (evt.getKeyLocation() != 2) {
             createFormulae();
             if (Settings.autoCompute) {
                 compute();
@@ -376,8 +391,9 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     private void compute() {
-
         computing = new Thread() {
+
+            Map<String, Object> result;
 
             @Override
             public void run() {
@@ -387,7 +403,9 @@ public class MainForm extends javax.swing.JFrame {
                         if (this.isInterrupted()) {
                             return;
                         }
-                        calc.eval(mathEditor.getText());
+
+                        result = calc.eval(mathEditor.getText());
+
                         if (this.isInterrupted()) {
                             return;
                         }
@@ -401,6 +419,18 @@ public class MainForm extends javax.swing.JFrame {
                     }
 
                     mainPlotter.updateUI();
+                    if (result != null) {
+                        String vars = "";
+                        for(Entry entry : result.entrySet())
+                        {
+                            if(entry.getValue().getClass() == Config.class)
+                            vars += "" + entry.getKey().toString() + 
+                                    " = " + ((Config)entry.getValue()).toTeXString() + "\n";
+                        }
+                        
+                        formulaeView.appendDocument("\\textbf{Результаты вычислений}\n" + vars);
+                        formulaeView.render();
+                    }
                 }
             }
         };

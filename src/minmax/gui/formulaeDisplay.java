@@ -52,6 +52,18 @@ public class formulaeDisplay extends javax.swing.JPanel {
             //ex here
         }
     }
+    
+    public void appendDocument(String s) {
+        String cleanDocument = document.replace("\\begin{array}{l}", "").replace("\\end{array}", "");
+        s = "\\begin{array}{l}" + cleanDocument + "&\\\\&\\\\" + s.replace("\n", "&\\\\") + "\\end{array}";
+
+        try {
+            TeXFormula tmp = new TeXFormula(s);
+            document = s;
+        } catch (Exception e) {
+            //ex here
+        }
+    }
 
     public void render() {
 

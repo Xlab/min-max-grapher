@@ -47,25 +47,21 @@ public class MainForm extends javax.swing.JFrame {
 
 //
 //
-//      Config t = a.plus(b);
-//        Config zs = new Config();
-//        long start = System.currentTimeMillis();
-//        for (int i = 0; i < 1; ++i) {
-//            zs = new Config();
-//
-//            Config x = new Config(1, 2);
-//            Config y = new Config(2, 3);
-//            Config z1 = x.star().times(y);
-//            Config z2 = y.star().times(x);
-//            zs = (z1.plus(z2)).star();
-//
-//
-//
-//
-//        }
-//        long end = System.currentTimeMillis();
-//        System.out.println((end - start));
-//        System.out.println(zs.getVertexCount());
+//   Config t = a.plus(b);
+        Config zs = new Config();
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 10; ++i) {
+            //zs = new Config();
+
+            Config x = new Config(1, 2);
+            Config y = new Config(2, 3);
+            Config z1 = x.star().times(y);
+            Config z2 = y.star().times(x);
+            zs = (z1.plus(z2)).star();
+        }
+        long end = System.currentTimeMillis();
+        System.out.println((end - start));
+        System.out.println(zs.getVertexCount());
 
 //      //surface.addLayer(a.star(), Color.green, false);
 //      //surface.addLayer(b.star(), Color.blue, false);

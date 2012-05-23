@@ -2,6 +2,9 @@ package math;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import hse.kcvc.jminmaxgd.Monomial;
+import hse.kcvc.jminmaxgd.Polynomial;
+import hse.kcvc.jminmaxgd.Series;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Map;
@@ -19,8 +22,6 @@ public class Calculator {
     private final GroovyShell shell;
     private final ArrayList<Layer> ready;
 
-    
-    
     public Calculator() {
         ready = new ArrayList<Layer>();
         binding = new Binding();
@@ -41,9 +42,16 @@ public class Calculator {
     }
 
     public Map eval(String input) {
-        Config result = (Config) shell.evaluate("minmax.model.Config dt(float event, float time){ return new minmax.model.Config(event, time); }; "
-                + "void display(minmax.model.Config var, java.awt.Color c){ __hiddenCalculator.display(var, c); }; "
-                + "void draft(minmax.model.Config var, java.awt.Color c){ __hiddenCalculator.draft(var, c); }; "
+        shell.evaluate(
+                "hse.kcvc.jminmaxgd.Monomial m(int g, int d){ return new hse.kcvc.jminmaxgd.Monomial(g, d); }; "
+                + "hse.kcvc.jminmaxgd.Polynomial p(java.util.List<hse.kcvc.jminmaxgd.Monomial> monomials){ return new hse.kcvc.jminmaxgd.Polynomial(monomials); }; "
+                + "hse.kcvc.jminmaxgd.Series s(hse.kcvc.jminmaxgd.Polynomial p,hse.kcvc.jminmaxgd.Polynomial q, hse.kcvc.jminmaxgd.Monomial r){ return new hse.kcvc.jminmaxgd.Series(g, d); }; "
+                + "void display(hse.kcvc.jminmaxgd.Monomial var, java.awt.Color c){ __hiddenCalculator.display(var, c); }; "
+                + "void draft(hse.kcvc.jminmaxgd.Monomial var, java.awt.Color c){ __hiddenCalculator.draft(var, c); }; "
+                + "void display(hse.kcvc.jminmaxgd.Polynomial var, java.awt.Color c){ __hiddenCalculator.display(var, c); }; "
+                + "void draft(hse.kcvc.jminmaxgd.Polynomial var, java.awt.Color c){ __hiddenCalculator.draft(var, c); }; "
+                + "void display(hse.kcvc.jminmaxgd.Series var, java.awt.Color c){ __hiddenCalculator.display(var, c); }; "
+                + "void draft(hse.kcvc.jminmaxgd.Series var, java.awt.Color c){ __hiddenCalculator.draft(var, c); }; "
                 + input);
         return binding.getVariables();
     }
@@ -56,15 +64,35 @@ public class Calculator {
             return false;
         }
     }
-    
-    void display(Config var, Color c)
-    {
-        ready.add(new Layer(var, c, true));
+
+    void display(Monomial var, Color c) {
+        Config config = new Config(var.getGamma(), var.getDelta());
+        ready.add(new Layer(config, c, true));
     }
-    
-    void draft(Config var, Color c)
-    {
-        ready.add(new Layer(var, c, false));
+
+    void draft(Monomial var, Color c) {
+        Config config = new Config(var.getGamma(), var.getDelta());
+        ready.add(new Layer(config, c, false));
+    }
+
+    void display(Polynomial var, Color c) {
+        Config config = new Config(var.getData());
+        ready.add(new Layer(config, c, true));
+    }
+
+    void draft(Polynomial var, Color c) {
+        Config config = new Config(var.getData());
+        ready.add(new Layer(config, c, false));
+    }
+
+    void display(Series var, Color c) {
+        //TODO: !!!
+        //ready.add(new Layer(var, c, true));
+    }
+
+    void draft(Series var, Color c) {
+        //TODO: !!!
+        //ready.add(new Layer(var, c, false));
     }
 
     public ArrayList<Layer> getReady() {
@@ -79,4 +107,3 @@ public class Calculator {
         return shell;
     }
 }
-

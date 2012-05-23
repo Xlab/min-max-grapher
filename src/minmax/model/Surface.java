@@ -1,5 +1,6 @@
 package minmax.model;
 
+import hse.kcvc.jminmaxgd.Monomial;
 import java.awt.Color;
 import java.util.ArrayList;
 import minmax.Settings;
@@ -54,21 +55,21 @@ public class Surface {
     public Piece getPiece(int layer, int i, int j) {
         Config config = getLayer(layer).getConfig();
         Color color = getLayer(layer).getColor();
-        final float event = i - dimension / 2;
-        final float time = (dimension - j) - dimension / 2;
+        final int event = i - dimension / 2;
+        final int time = (dimension - j) - dimension / 2;
 
-        for (ZUinfPoint slope : config.getVertex()) {
-            if (event > slope.getX() && time < slope.getY()) {
+        for (Monomial slope : config.getVertex()) {
+            if (event > slope.getGamma() && time < slope.getDelta()) {
                 return new Piece(event, time, Piece.Type.REGULAR, color);
             }
         }
 
-        for (ZUinfPoint slope : config.getVertex()) {
-            if (slope.getX() == event && slope.getY() == time) {
+        for (Monomial slope : config.getVertex()) {
+            if (slope.getGamma() == event && slope.getDelta() == time) {
                 return new Piece(event, time, Piece.Type.VERTEX, color);
-            } else if (slope.getX() == event && time < slope.getY()) {
+            } else if (slope.getGamma() == event && time < slope.getDelta()) {
                 return new Piece(event, time, Piece.Type.LEFT, color);
-            } else if (slope.getY() == time && event > slope.getX()) {
+            } else if (slope.getDelta() == time && event > slope.getGamma()) {
                 return new Piece(event, time, Piece.Type.BOTTOM, color);
             }
         }

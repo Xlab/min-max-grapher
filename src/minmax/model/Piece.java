@@ -1,23 +1,25 @@
 package minmax.model;
 
+import hse.kcvc.jminmaxgd.Monomial;
 import java.awt.Color;
+import minmax.gui.utils.Utils;
 
 /**
  *
  * @author Kouprianov Maxim <me@kc.vc> @ SE HSE
  */
 public class Piece {
-    private final ZUinfPoint location;
+    private final Monomial location;
     private final Type type;
     private final Color color;
 
-    public Piece(float event, float time, Type type, Color color) {
+    public Piece(int g, int d, Type type, Color color) {
         this.type = type;
-        this.location = new ZUinfPoint(event, time);
+        this.location = new Monomial(g, d);
         this.color = color;
     }
 
-    public ZUinfPoint getLocation() {
+    public Monomial getLocation() {
         return location;
     }
     
@@ -38,6 +40,6 @@ public class Piece {
 
     @Override
     public String toString() {
-        return location.toTeXString();
+        return Utils.mLaTeX(location);
     }
 }

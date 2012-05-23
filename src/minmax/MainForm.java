@@ -4,14 +4,22 @@
  */
 package minmax;
 
+import hse.kcvc.jminmaxgd.Monomial;
+import hse.kcvc.jminmaxgd.Polynomial;
+import hse.kcvc.jminmaxgd.Series;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import jsyntaxpane.DefaultSyntaxKit;
 import math.Calculator;
+import minmax.gui.utils.Utils;
 import minmax.model.Config;
 import minmax.model.Layer;
 import minmax.model.Surface;
@@ -31,66 +39,12 @@ public class MainForm extends javax.swing.JFrame {
 
         DefaultSyntaxKit.initKit();
         mathEditor.setContentType("text/groovy");
-        mathEditor.setFont(new Font("Monaco", Font.PLAIN, 13));
+        mathEditor.setFont(new Font("Monaco", Font.PLAIN, 12));
 
         surface = new Surface();
         mainPlotter.setSurface(surface);
         mainPlotter.setXLabel("\\gamma");
         mainPlotter.setYLabel("\\delta");
-
-//      Config g = a.plus(b).plus(c).plus(d).plus(f);
-//      surface.addLayer(a, Color.orange, false);
-//      surface.addLayer(b, Color.green, false);
-//      surface.addLayer(c, Color.blue, false);
-//      surface.addLayer(d, Color.cyan, false);
-//      surface.addLayer(f, Color.black, false);
-
-//
-//
-//   Config t = a.plus(b);
-        Config zs = new Config();
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < 10; ++i) {
-            //zs = new Config();
-
-            Config x = new Config(1, 2);
-            Config y = new Config(2, 3);
-            Config z1 = x.star().times(y);
-            Config z2 = y.star().times(x);
-            zs = (z1.plus(z2)).star();
-        }
-        long end = System.currentTimeMillis();
-        System.out.println((end - start));
-        System.out.println(zs.getVertexCount());
-
-//      //surface.addLayer(a.star(), Color.green, false);
-//      //surface.addLayer(b.star(), Color.blue, false);
-//
-        //  surface.addLayer(zs, Color.red);
-//
-//      surface.addLayer(new Config(0, -4).plus(new Config(5, -4)).plus(new Config(3, -2)).plus(new Config(8, -2)), Color.green);
-//      ystem.out.println((a.plus(b)).star().plus(c));
-//      surface.addLayer(a.plus(b).plus(c).plus(d), Color.blue);
-//      surface.addLayer(a.plus(b).plus(c).plus(d), Color.green);
-
-//      Config lol = new Config(0, 0);
-//      for(int i = 1; i< 200; i += 1)
-//      {
-//          lol = lol.plus(new Config(i, i));
-//            
-//      }
-//        
-//      surface.addLayer(lol, Color.red, false);
-//        
-//      Config blue = new Config(3, 3);
-//      for(int i = 2; i< 200; i += 2)
-//      {
-//          blue = blue.plus(new Config(i, i));
-//            
-//      }
-
-//      surface.addLayer(blue, Color.blue, false);
-
     }
 
     /**
@@ -135,7 +89,7 @@ public class MainForm extends javax.swing.JFrame {
         );
         mainPlotterLayout.setVerticalGroup(
             mainPlotterLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 451, Short.MAX_VALUE)
+            .add(0, 453, Short.MAX_VALUE)
         );
 
         mainSplit.setTopComponent(mainPlotter);
@@ -163,11 +117,11 @@ public class MainForm extends javax.swing.JFrame {
         formulaeView.setLayout(formulaeViewLayout);
         formulaeViewLayout.setHorizontalGroup(
             formulaeViewLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 402, Short.MAX_VALUE)
+            .add(0, 398, Short.MAX_VALUE)
         );
         formulaeViewLayout.setVerticalGroup(
             formulaeViewLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 103, Short.MAX_VALUE)
+            .add(0, 101, Short.MAX_VALUE)
         );
 
         formulaeScroll.setViewportView(formulaeView);
@@ -214,7 +168,7 @@ public class MainForm extends javax.swing.JFrame {
 
         menuEval.setText("Построение");
 
-        menuEvalCompute.setAction(ca);
+        menuEvalCompute.setAction(computeAction);
         menuEvalCompute.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, java.awt.event.InputEvent.META_MASK));
         menuEvalCompute.setText("Вычислить");
         menuEval.add(menuEvalCompute);
@@ -257,7 +211,7 @@ public class MainForm extends javax.swing.JFrame {
 
     private void menuViewAutoComputeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuViewAutoComputeActionPerformed
         Settings.autoCompute = menuViewAutoCompute.getState();
-        ca.setEnabled(!Settings.autoCompute);
+        computeAction.setEnabled(!Settings.autoCompute);
     }//GEN-LAST:event_menuViewAutoComputeActionPerformed
 
     /**
@@ -333,46 +287,43 @@ public class MainForm extends javax.swing.JFrame {
         }
     }
 
-    private String adaptFormulae(String f) {
-        f = f.replaceAll("\\s*//.*$", ""); // clean basic comments
-        f = f.replaceAll("\\s*\\*\\s*(dt\\W)", " \\\\otimes $1"); // * -> otimes
-        f = f.replaceAll("dt\\s*\\(\\s*([\\w+-]+)\\s*,\\s*([\\w+-]+)\\s*\\)", "\\\\gamma^{$1}\\\\delta^{$2}"); // dt -> gamma-delta notation
-        f = f.replaceAll("dt\\s*\\(.*\\)", ""); //dt_ not match
-        f = f.replaceAll("display\\s*\\(?\\s*([^,]+)\\s*,\\s*([\\w+-]+)(?:\\s*\\))?", "\\\\text{Display } $1 \\\\text{ in } \\\\textbf{$2}"); // display -> Display x in
-        f = f.replaceAll("display\\s*\\(?.*\\)?", ""); //display_ not match
-        f = f.replaceAll("draft\\s*\\(?\\s*([^,]+)\\s*,\\s*([\\w+-]+)(?:\\s*\\))?", "\\\\text{Draft } $1 \\\\text{ in } \\\\textbf{$2}"); // draft -> Draft x in
-        f = f.replaceAll("draft\\s*\\(?.*\\)?", ""); //draft_ not match
-        f = f.replaceAll("\\s*\\+\\s*", " \\\\oplus "); // + -> oplus
-        f = f.replaceAll("([\\w+-]+)\\s*\\(\\s*([\\w+-]+)\\s*\\)", "\\\\bigoplus_{k=0}^{$2}$1^{k}"); // (k) -> k-sum
-        f = f.replaceAll("\\(\\s*inf\\s*\\)", "^{\\\\star}"); // (inf) -> *
-        f = f.replaceAll("\\(\\s*\\)", "^{\\\\star}"); // () -> *
-        f = f.replaceAll("\\[([\\w+-]+)\\]", "^{$1}");  // [54] -> ^{54}
-        f = f.replaceAll("\\s*\\[.*\\]", ""); //a[] -> a
-        f = f.replaceAll("dt\\W", ""); //dt -> none
-        f = f.replaceAll("def\\s+", ""); // dt -> none
-        f = f.replaceAll("([\\W]+|^)-inf([\\W]+|$)", "$1-\\\\infty$2"); // +inf -> 8
-        f = f.replaceAll("([\\W]+|^)inf([\\W]+|$)", "$1+\\\\infty$2"); // +inf -> 8
-        f = f.replaceAll("([\\W]+|^)zero([\\W]+|$)", "$1\\\\varepsilon$2"); // zero -> epsilon
-        f = f.replaceAll("([\\W]+|^)unit([\\W]+|$)", "$1e$2"); // unit -> e
-        f = f.replaceAll("/\\*(.*)$*", "\\\\text{$1}"); //hard comments bold
-        f = f.replaceAll("^*(.*)\\*/", "\\\\text{$1}"); //hard comments bold
-        f = f.replaceAll("\\}\\s*\\*", "\\} \\\\otimes "); // * -> otimes
-        f = f.replaceAll("\\s*\\*+\\s*", ""); // * -> empty
-        //System.out.println(f);
-        return f;
-    }
-
     private void createFormulae() {
         formulae = new Thread() {
 
             @Override
             public void run() {
-                formulaeView.setDocument("");
                 Calculator calc = new Calculator();
                 String s = mathEditor.getText();
-                if (calc.checkLine(s)) {
-                    formulaeView.setDocument(adaptFormulae(s));
+                if (calc.checkLine(mathEditor.getText())) {
+                    try {
+                        Map<String, Object> result = calc.eval(mathEditor.getText());
+
+                        String vars = "";
+                        if (result != null) {
+                            for (Entry entry : result.entrySet()) {
+                                if (entry.getValue().getClass() == Monomial.class) {
+                                    vars += "" + entry.getKey().toString()
+                                            + " = " + Utils.mLaTeX((Monomial) entry.getValue()) + "\n";
+                                } else if (entry.getValue().getClass() == Polynomial.class) {
+                                    vars += "" + entry.getKey().toString()
+                                            + " = " + Utils.pLaTeX((Polynomial) entry.getValue()) + "\n";
+                                } else if (entry.getValue().getClass() == Series.class) {
+                                    vars += "" + entry.getKey().toString()
+                                            + " = " + Utils.sLaTeX((Series) entry.getValue()) + "\n";
+                                }
+                            }
+
+                            if (vars.length() > 1) {
+                                vars = "\\large{Вычисленное:}\n" + vars;
+                            }
+                        }
+
+                        formulaeView.setDocument(vars);
+                    } catch (Exception ex) {
+                        //formulaeView.setDocument("");
+                    }
                 }
+
                 if (this.isInterrupted()) {
                     return;
                 }
@@ -415,18 +366,6 @@ public class MainForm extends javax.swing.JFrame {
                     }
 
                     mainPlotter.updateUI();
-                    if (result != null) {
-                        String vars = "";
-                        for(Entry entry : result.entrySet())
-                        {
-                            if(entry.getValue().getClass() == Config.class)
-                            vars += "" + entry.getKey().toString() + 
-                                    " = " + ((Config)entry.getValue()).toTeXString() + "\n";
-                        }
-                        
-                        formulaeView.appendDocument("\\textbf{Результаты вычислений}\n" + vars);
-                        formulaeView.render();
-                    }
                 }
             }
         };
@@ -438,5 +377,5 @@ public class MainForm extends javax.swing.JFrame {
     }
     Thread computing;
     Thread formulae;
-    ComputeAction ca = new ComputeAction();
+    ComputeAction computeAction = new ComputeAction();
 }

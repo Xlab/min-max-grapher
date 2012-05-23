@@ -49,7 +49,7 @@ public class formulaeDisplay extends javax.swing.JPanel {
             TeXFormula tmp = new TeXFormula(s);
             document = s;
         } catch (Exception e) {
-            //ex here
+            //System.out.println(e.getMessage());
         }
     }
     

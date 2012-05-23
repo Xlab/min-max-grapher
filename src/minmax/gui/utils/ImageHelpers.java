@@ -1,4 +1,4 @@
-package minmax.gui;
+package minmax.gui.utils;
 
 import java.awt.*;
 import java.awt.image.*;

@@ -4,6 +4,7 @@
  */
 package minmax.gui;
 
+import minmax.gui.utils.ImageHelpers;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.media.opengl.GLJPanel;
@@ -354,12 +355,12 @@ public class Plotter extends GLJPanel {
                         if (piece.getType() != Piece.Type.REGULAR) {
                             if ((piece.getType() == Piece.Type.BOTTOM || piece.getType() == Piece.Type.VERTEX)
                                     && surface.getPiece(layer, x + 1, y + 1).getType() == Piece.Type.REGULAR) {
-                                g2.drawImage(drawPiece(new Piece(piece.getLocation().getX(), piece.getLocation().getY(),
+                                g2.drawImage(drawPiece(new Piece(piece.getLocation().getGamma(), piece.getLocation().getDelta(),
                                         Piece.Type.LEFT, piece.getColor())), null, column * cellSize + kX, row * cellSize + kY + 1);
 
                             } else if (surface.getPiece(layer, x - 1, y + 1) != null && (piece.getType() == Piece.Type.VERTEX)
                                     && surface.getPiece(layer, x - 1, y + 1).getType() == Piece.Type.VERTEX) {
-                                g2.drawImage(drawPiece(new Piece(piece.getLocation().getX(), piece.getLocation().getY(),
+                                g2.drawImage(drawPiece(new Piece(piece.getLocation().getGamma(), piece.getLocation().getDelta(),
                                         Piece.Type.BOTTOM, piece.getColor())), null, column * cellSize + kX, row * cellSize + kY + 1);
                             } else {
                                 g2.drawImage(drawPiece(piece), null, column * cellSize + kX, row * cellSize + kY + 1);

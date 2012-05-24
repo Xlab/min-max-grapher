@@ -1,9 +1,11 @@
 package minmax.model;
 
 import hse.kcvc.jminmaxgd.Monomial;
+import hse.kcvc.jminmaxgd.Polynomial;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import minmax.Settings;
 
 /**
  *
@@ -124,4 +126,15 @@ public class Config {
      * this.times(new Config(f[0], f[1])); } else { return this; } } //Groovy
      * linkage end
      */
+
+    public Polynomial star() {
+        Monomial m = vertex[0];
+        Polynomial p = new Polynomial(new Monomial(0,0));
+        for(int i = 1; i< Settings.defaultPrecision; ++i)
+        {
+            p.addElement(new Monomial(m.getGamma()*i, m.getDelta()*i));
+        }
+        p.sortSimplify();
+        return p;
+    }
 }

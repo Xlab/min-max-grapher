@@ -7,20 +7,16 @@ package minmax;
 import hse.kcvc.jminmaxgd.Monomial;
 import hse.kcvc.jminmaxgd.Polynomial;
 import hse.kcvc.jminmaxgd.Series;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import jsyntaxpane.DefaultSyntaxKit;
 import math.Calculator;
 import minmax.gui.utils.Utils;
-import minmax.model.Config;
 import minmax.model.Layer;
 import minmax.model.Surface;
 
@@ -39,7 +35,7 @@ public class MainForm extends javax.swing.JFrame {
 
         DefaultSyntaxKit.initKit();
         mathEditor.setContentType("text/groovy");
-        mathEditor.setFont(new Font("Monaco", Font.PLAIN, 12));
+        mathEditor.setFont(new Font("Monaco", Font.PLAIN, 13));
 
         surface = new Surface();
         mainPlotter.setSurface(surface);
@@ -301,15 +297,48 @@ public class MainForm extends javax.swing.JFrame {
                         String vars = "";
                         if (result != null) {
                             for (Entry entry : result.entrySet()) {
-                                if (entry.getValue().getClass() == Monomial.class) {
+                                if (entry.getValue() instanceof Monomial) {
                                     vars += "" + entry.getKey().toString()
                                             + " = " + Utils.mLaTeX((Monomial) entry.getValue()) + "\n";
-                                } else if (entry.getValue().getClass() == Polynomial.class) {
+                                } else if (entry.getValue() instanceof Polynomial) {
                                     vars += "" + entry.getKey().toString()
                                             + " = " + Utils.pLaTeX((Polynomial) entry.getValue()) + "\n";
-                                } else if (entry.getValue().getClass() == Series.class) {
+                                } else if (entry.getValue() instanceof Series) {
                                     vars += "" + entry.getKey().toString()
                                             + " = " + Utils.sLaTeX((Series) entry.getValue()) + "\n";
+                                } else if (entry.getValue() instanceof ArrayList) {
+                                    try {
+                                        String prefix = entry.getKey().toString();
+                                        int i = 0;
+                                        for (Monomial m : (ArrayList<Monomial>) entry.getValue()) {
+                                            ++i;
+                                            vars += "" + prefix + i
+                                                    + " = " + Utils.mLaTeX(m) + "\n";
+                                        }
+                                    } catch (Exception ex1) {
+                                        try {
+                                            String prefix = entry.getKey().toString();
+                                            int i = 0;
+                                            for (Polynomial p : (ArrayList<Polynomial>) entry.getValue()) {
+                                                ++i;
+                                                vars += "" + prefix + i
+                                                        + " = " + Utils.pLaTeX(p) + "\n";
+                                            }
+                                        } catch (Exception ex2) {
+                                            try {
+
+                                                String prefix = entry.getKey().toString();
+                                                int i = 0;
+                                                for (Series s1 : (ArrayList<Series>) entry.getValue()) {
+                                                    ++i;
+                                                    vars += "" + prefix + i
+                                                            + " = " + Utils.sLaTeX(s1) + "\n";
+                                                }
+                                            } catch (Exception ex3) {
+                                                continue;
+                                            }
+                                        }
+                                    }
                                 }
                             }
 

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import jsyntaxpane.DefaultSyntaxKit;
 import math.Calculator;
 import minmax.gui.utils.Utils;
@@ -52,6 +53,7 @@ public class MainForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jSeparator1 = new javax.swing.JSeparator();
         mainSplit = new javax.swing.JSplitPane();
         mainPlotter = new minmax.gui.Plotter();
         editorsSplit = new javax.swing.JSplitPane();
@@ -61,6 +63,8 @@ public class MainForm extends javax.swing.JFrame {
         formulaeView = new minmax.gui.formulaeDisplay();
         menuBar = new javax.swing.JMenuBar();
         menuMe = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         menuExit = new javax.swing.JMenuItem();
         menuView = new javax.swing.JMenu();
         menuViewShadow = new javax.swing.JCheckBoxMenuItem();
@@ -128,6 +132,15 @@ public class MainForm extends javax.swing.JFrame {
 
         menuMe.setText("MinMaxGrapher");
         menuMe.setFont(new java.awt.Font("Lucida Grande", 1, 14)); // NOI18N
+
+        jMenuItem1.setText("О программе");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        menuMe.add(jMenuItem1);
+        menuMe.add(jSeparator2);
 
         menuExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.META_MASK));
         menuExit.setText("Выход");
@@ -210,6 +223,14 @@ public class MainForm extends javax.swing.JFrame {
         computeAction.setEnabled(!Settings.autoCompute);
     }//GEN-LAST:event_menuViewAutoComputeActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        JOptionPane.showMessageDialog(rootPane, "MinMaxGrapher (c) Куприянов Максим "
+                + "2011-2012\nНИУ-ВШЭ, 2 курс, 272 группа\n\n"
+                + "Данное ПО является частью курсовой работы 2011-2012гг, \n"
+                + "используется для отладки библиотеки jMinMaxGD",
+                "О программе", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -257,6 +278,9 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JSplitPane editorsSplit;
     private javax.swing.JScrollPane formulaeScroll;
     private minmax.gui.formulaeDisplay formulaeView;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private minmax.gui.Plotter mainPlotter;
     private javax.swing.JSplitPane mainSplit;
     private javax.swing.JEditorPane mathEditor;

@@ -109,30 +109,11 @@ public class Config {
         return hash;
     }
 
-    /*
-     * //Groovy linkage begin public Config getAt(int power) { return
-     * this.power(power); }
-     *
-     * public Config call() { return this.star(); }
-     *
-     * public Config call(int times) { if (times == Constants.INFINITY) { return
-     * this.star(); } else { return this; } }
-     *
-     * public Config multiply(Config b) { return this.times(b); }
-     *
-     * public Config positive() { return this; }
-     *
-     * public Config multiply(int[] f) { if (f.length > 1) { return
-     * this.times(new Config(f[0], f[1])); } else { return this; } } //Groovy
-     * linkage end
-     */
-
     public Polynomial star() {
         Monomial m = vertex[0];
-        Polynomial p = new Polynomial(new Monomial(0,0));
-        for(int i = 1; i< Settings.defaultPrecision; ++i)
-        {
-            p.addElement(new Monomial(m.getGamma()*i, m.getDelta()*i));
+        Polynomial p = new Polynomial(new Monomial(0, 0));
+        for (int i = 1; i < Settings.defaultPrecision; ++i) {
+            p.addElement(new Monomial(m.getGamma() * i, m.getDelta() * i));
         }
         p.sortSimplify();
         return p;

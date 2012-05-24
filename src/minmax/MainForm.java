@@ -106,7 +106,7 @@ public class MainForm extends javax.swing.JFrame {
 
         mainSplit.setTopComponent(mainPlotter);
 
-        editorsSplit.setResizeWeight(0.3);
+        editorsSplit.setResizeWeight(0.5);
 
         mathEditor.setFont(new java.awt.Font("Monaco", 0, 12)); // NOI18N
         mathEditor.setMinimumSize(new java.awt.Dimension(100, 100));
@@ -236,7 +236,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_menuViewAutoComputeActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        JOptionPane.showMessageDialog(rootPane, "MinMaxGrapher (c) Куприянов Максим "
+        JOptionPane.showMessageDialog(rootPane, "MinMaxGrapher v1.0 (c) Куприянов Максим "
                 + "2011-2012\nНИУ-ВШЭ, 2 курс, 272 группа\n\n"
                 + "Данное ПО является частью курсовой работы 2011-2012гг, \n"
                 + "используется для отладки библиотеки jMinMaxGD",

@@ -1,11 +1,28 @@
 package math;
 
+/**
+ * Создал: Максим Куприянов,
+ * Факультет Бизнес-информатики
+ * Отделение Программной инженерии
+ * 2 курс, группа 272ПИ, НИУ-ВШЭ
+ *
+ * Проект: Курсовая работа 2011-2012гг
+ *
+ * Тема: "Программа выполнения операций в
+ * идемпотентном полукольце конус-ограниченных
+ * множеств."
+ *
+ * Программа: MinMaxGrapher
+ *
+ * Связь: me@kc.vc
+ */
+
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import hse.kcvc.jminmaxgd.Constants;
 import hse.kcvc.jminmaxgd.Monomial;
 import hse.kcvc.jminmaxgd.Polynomial;
 import hse.kcvc.jminmaxgd.Series;
-import hse.kcvc.jminmaxgd.Constants;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Map;
@@ -103,7 +120,7 @@ public class Calculator {
     }
 
     void draft(Series var, Color c) {
-          Config r = new Config(var.getR().getGamma(), var.getR().getDelta());
+        Config r = new Config(var.getR().getGamma(), var.getR().getDelta());
         Polynomial rStar = r.star();
         Polynomial result = var.getP().oplus(var.getQ().otimes(rStar));
         Config config = new Config(result.getData());

@@ -1,18 +1,29 @@
 package minmax.gui;
 
+/**
+ * Создал: Максим Куприянов,
+ * Факультет Бизнес-информатики
+ * Отделение Программной инженерии
+ * 2 курс, группа 272ПИ, НИУ-ВШЭ
+ *
+ * Проект: Курсовая работа 2011-2012гг
+ *
+ * Тема: "Программа выполнения операций в
+ * идемпотентном полукольце конус-ограниченных
+ * множеств."
+ *
+ * Программа: MinMaxGrapher
+ *
+ * Связь: me@kc.vc
+ */
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 
-/**
- *
- * @author xlab
- */
 public class formulaeDisplay extends javax.swing.JPanel {
 
     /**

@@ -1,8 +1,21 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package minmax;
+
+/**
+ * Создал: Максим Куприянов,
+ * Факультет Бизнес-информатики
+ * Отделение Программной инженерии
+ * 2 курс, группа 272ПИ, НИУ-ВШЭ
+ *
+ * Проект: Курсовая работа 2011-2012гг
+ *
+ * Тема: "Программа выполнения операций в
+ * идемпотентном полукольце конус-ограниченных
+ * множеств."
+ *
+ * Программа: MinMaxGrapher
+ *
+ * Связь: me@kc.vc
+ */
 
 import hse.kcvc.jminmaxgd.Monomial;
 import hse.kcvc.jminmaxgd.Polynomial;
@@ -10,7 +23,6 @@ import hse.kcvc.jminmaxgd.Series;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.AbstractAction;

@@ -1,9 +1,22 @@
 package minmax;
 
 /**
+ * Создал: Максим Куприянов,
+ * Факультет Бизнес-информатики
+ * Отделение Программной инженерии
+ * 2 курс, группа 272ПИ, НИУ-ВШЭ
  *
- * @author Kouprianov Maxim <me@kc.vc> @ SE HSE
+ * Проект: Курсовая работа 2011-2012гг
+ *
+ * Тема: "Программа выполнения операций в
+ * идемпотентном полукольце конус-ограниченных
+ * множеств."
+ *
+ * Программа: MinMaxGrapher
+ *
+ * Связь: me@kc.vc
  */
+
 public class MinMaxGrapher {
     public static void main(String[] args) {
         new MainForm().setVisible(true);

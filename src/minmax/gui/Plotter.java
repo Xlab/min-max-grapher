@@ -1,23 +1,32 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package minmax.gui;
 
-import minmax.gui.utils.ImageHelpers;
+/**
+ * Создал: Максим Куприянов,
+ * Факультет Бизнес-информатики
+ * Отделение Программной инженерии
+ * 2 курс, группа 272ПИ, НИУ-ВШЭ
+ *
+ * Проект: Курсовая работа 2011-2012гг
+ *
+ * Тема: "Программа выполнения операций в
+ * идемпотентном полукольце конус-ограниченных
+ * множеств."
+ *
+ * Программа: MinMaxGrapher
+ *
+ * Связь: me@kc.vc
+ */
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.media.opengl.GLJPanel;
 import minmax.Settings;
+import minmax.gui.utils.ImageHelpers;
 import minmax.model.Piece;
 import minmax.model.Surface;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 
-/**
- *
- * @author Kouprianov Maxim <me@kc.vc> @ SE HSE
- */
 public class Plotter extends GLJPanel {
 
     private Point tmpViewboxCenter;
@@ -179,7 +188,7 @@ public class Plotter extends GLJPanel {
         final Point p = new Point(0, 0);
         final int w = getSize().width;
         final int h = getSize().height;
-        
+
         GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().
                 getDefaultConfiguration();
         BufferedImage buffer = gc.createCompatibleImage(w, h);
@@ -368,7 +377,7 @@ public class Plotter extends GLJPanel {
                                     final int R = 2;
                                     g2.fillOval(x1 - R, y1 - R, R * 2 + 1, R * 2 + 1);
                                     if (zoom >= 1.2) {
-                                    g2.drawImage(drawFormula(piece.toString(), 14), null, x1  - cellSize, y1 - cellSize);
+                                        g2.drawImage(drawFormula(piece.toString(), 14), null, x1 - cellSize, y1 - cellSize);
                                     }
                                 }
                             }

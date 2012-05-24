@@ -1,5 +1,22 @@
 package minmax.model;
 
+/**
+ * Создал: Максим Куприянов,
+ * Факультет Бизнес-информатики
+ * Отделение Программной инженерии
+ * 2 курс, группа 272ПИ, НИУ-ВШЭ
+ *
+ * Проект: Курсовая работа 2011-2012гг
+ *
+ * Тема: "Программа выполнения операций в
+ * идемпотентном полукольце конус-ограниченных
+ * множеств."
+ *
+ * Программа: MinMaxGrapher
+ *
+ * Связь: me@kc.vc
+ */
+
 import hse.kcvc.jminmaxgd.Monomial;
 import hse.kcvc.jminmaxgd.Polynomial;
 import java.util.ArrayList;
@@ -7,10 +24,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import minmax.Settings;
 
-/**
- *
- * @author Kouprianov Maxim <me@kc.vc> @ SE HSE
- */
 public class Config {
 
     public final Monomial[] vertex;

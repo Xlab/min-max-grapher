@@ -18,8 +18,10 @@ package minmax.gui;
  */
 
 import java.awt.*;
+import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import javax.media.opengl.GLJPanel;
+import javax.media.opengl.awt.GLJPanel;
 import minmax.Settings;
 import minmax.gui.utils.ImageHelpers;
 import minmax.model.Piece;

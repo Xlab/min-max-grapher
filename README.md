@@ -5,9 +5,9 @@ It's a very specific topic, so don't try to realize anything.
 
 ## Features
 
-* Rendering elements of "**Max in [γ,δ]**" in 2-dimensional domain
-* LaTeX rendering for analytic computations
-* Handy editor with full support of **Groovy** scriptig language integrated
+* Rendering elements of "**Max in [γ,δ]**" in 2-dimensional domain;
+* LaTeX rendering for analytic computations;
+* Handy editor with full support of **Groovy** scripting language integrated.
 
 [Screenshot of typical evaluation](http://cl.ly/HnKI/simple.png)
 
